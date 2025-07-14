@@ -1,0 +1,626 @@
+# Custom Configuration for [[PROJECT_NAME]]
+# Configuración personalizada que complementa la configuración base
+
+# Información del proyecto
+project:
+  name: "[[PROJECT_NAME]]"
+  type: "[[PROJECT_TYPE]]"
+  version: "1.0.0"
+  description: "Project-specific configuration for Claude Code"
+  author: "[[AUTHOR_NAME]]"
+  
+  # Configuración específica del proyecto
+  settings:
+    # Configuración de desarrollo
+    development:
+      hot_reload: true
+      debug_mode: true
+      verbose_logging: true
+      auto_save: true
+      
+    # Configuración de producción
+    production:
+      debug_mode: false
+      verbose_logging: false
+      performance_monitoring: true
+      error_reporting: true
+
+# Configuración de Claude Code específica
+claude:
+  # Configuración de comportamiento
+  behavior:
+    # Estilo de respuesta preferido
+    response_style: "detailed"  # concise, detailed, technical
+    
+    # Nivel de explicación
+    explanation_level: "intermediate"  # beginner, intermediate, advanced
+    
+    # Preferencias de código
+    code_preferences:
+      # Estilo de código preferido
+      style: "functional"  # functional, object-oriented, procedural
+      
+      # Nivel de comentarios
+      comments: "minimal"  # none, minimal, detailed
+      
+      # Uso de tipos
+      type_annotations: true
+      
+      # Manejo de errores
+      error_handling: "comprehensive"  # basic, comprehensive, defensive
+      
+      # Patrones de diseño preferidos
+      design_patterns: ["factory", "observer", "strategy", "decorator"]
+      
+    # Configuración de testing
+    testing:
+      # Framework de testing preferido
+      framework: "jest"  # jest, mocha, pytest, etc.
+      
+      # Nivel de testing
+      coverage_target: 80
+      
+      # Tipos de tests a generar
+      generate_tests: ["unit", "integration"]
+      
+      # Estilo de assertions
+      assertion_style: "expect"  # expect, assert, should
+      
+    # Configuración de documentación
+    documentation:
+      # Estilo de documentación
+      style: "jsdoc"  # jsdoc, sphinx, rustdoc, etc.
+      
+      # Nivel de detalle
+      detail_level: "comprehensive"  # minimal, standard, comprehensive
+      
+      # Incluir ejemplos
+      include_examples: true
+      
+      # Formato de README
+      readme_format: "detailed"  # simple, detailed, comprehensive
+
+# Configuración de herramientas específicas
+tools:
+  # Configuración de linting
+  linting:
+    enabled: true
+    rules:
+      - "no-console"
+      - "prefer-const"
+      - "no-unused-vars"
+      - "semicolon"
+    
+    # Herramientas específicas por tecnología
+    javascript:
+      tool: "eslint"
+      config: ".eslintrc.js"
+      
+    python:
+      tool: "flake8"
+      config: "setup.cfg"
+      
+    rust:
+      tool: "clippy"
+      config: "clippy.toml"
+      
+  # Configuración de formateo
+  formatting:
+    enabled: true
+    
+    # Herramientas específicas
+    javascript:
+      tool: "prettier"
+      config: ".prettierrc"
+      
+    python:
+      tool: "black"
+      config: "pyproject.toml"
+      
+    rust:
+      tool: "rustfmt"
+      config: "rustfmt.toml"
+      
+  # Configuración de testing
+  testing:
+    # Comandos de testing
+    commands:
+      unit: "npm test"
+      integration: "npm run test:integration"
+      e2e: "npm run test:e2e"
+      coverage: "npm run test:coverage"
+      
+    # Configuración de coverage
+    coverage:
+      threshold: 80
+      formats: ["html", "lcov"]
+      
+  # Configuración de build
+  build:
+    commands:
+      dev: "npm run dev"
+      build: "npm run build"
+      start: "npm start"
+      
+    # Configuración de ambientes
+    environments:
+      development:
+        command: "npm run dev"
+        port: 3000
+        
+      staging:
+        command: "npm run build && npm run serve"
+        port: 8080
+        
+      production:
+        command: "npm run build && npm run start"
+        port: 80
+
+# Configuración de workflows personalizados
+workflows:
+  # Workflow de desarrollo de features
+  feature_development:
+    steps:
+      - "create_branch"
+      - "implement_feature"
+      - "write_tests"
+      - "run_linting"
+      - "create_pull_request"
+      - "code_review"
+      - "merge_to_develop"
+      
+    # Criterios de calidad personalizados
+    quality_gates:
+      - "tests_pass"
+      - "coverage_above_threshold"
+      - "no_linting_errors"
+      - "performance_acceptable"
+      - "security_scan_clean"
+      
+  # Workflow de corrección de bugs
+  bug_fixing:
+    steps:
+      - "reproduce_bug"
+      - "create_hotfix_branch"
+      - "implement_fix"
+      - "write_regression_test"
+      - "urgent_review"
+      - "merge_to_main"
+      
+    # Criterios para hotfix
+    hotfix_criteria:
+      - "critical_bug_fixed"
+      - "no_breaking_changes"
+      - "minimal_code_change"
+      - "regression_test_added"
+
+# Configuración de contextos específicos
+contexts:
+  # Contextos adicionales del proyecto
+  additional_contexts:
+    - "project-specific-patterns.md"
+    - "api-conventions.md"
+    - "database-schema.md"
+    - "deployment-guide.md"
+    
+  # Contextos por tipo de tarea
+  task_specific:
+    frontend:
+      contexts:
+        - "ui-components.md"
+        - "styling-guide.md"
+        - "accessibility-requirements.md"
+        
+    backend:
+      contexts:
+        - "api-design.md"
+        - "database-patterns.md"
+        - "security-requirements.md"
+        
+    devops:
+      contexts:
+        - "infrastructure-setup.md"
+        - "deployment-procedures.md"
+        - "monitoring-setup.md"
+
+# Configuración de prompts personalizados
+prompts:
+  # Prompts específicos del proyecto
+  custom_prompts:
+    # Prompt para code review específico
+    project_code_review:
+      file: "prompts/project-code-review.md"
+      description: "Project-specific code review guidelines"
+      
+    # Prompt para documentación de API
+    api_documentation:
+      file: "prompts/api-documentation.md"
+      description: "API documentation generation"
+      
+    # Prompt para testing específico
+    testing_strategy:
+      file: "prompts/testing-strategy.md"
+      description: "Project-specific testing approach"
+      
+  # Configuración de prompts por rol
+  role_specific:
+    frontend_developer:
+      prompts:
+        - "react-component-creation"
+        - "styling-best-practices"
+        - "accessibility-review"
+        
+    backend_developer:
+      prompts:
+        - "api-endpoint-design"
+        - "database-optimization"
+        - "security-review"
+        
+    devops_engineer:
+      prompts:
+        - "infrastructure-setup"
+        - "deployment-automation"
+        - "monitoring-configuration"
+
+# Configuración de integraciones
+integrations:
+  # Integración con herramientas externas
+  external_tools:
+    # Integración con Jira
+    jira:
+      enabled: true
+      url: "https://company.atlassian.net"
+      project_key: "PROJ"
+      
+    # Integración con Slack
+    slack:
+      enabled: true
+      webhook_url: "${SLACK_WEBHOOK_URL}"
+      channel: "#development"
+      
+    # Integración con GitHub
+    github:
+      enabled: true
+      repo: "company/[[PROJECT_NAME]]"
+      labels: ["enhancement", "bug", "documentation"]
+      
+  # Integración con servicios de monitoreo
+  monitoring:
+    # Sentry para error tracking
+    sentry:
+      enabled: true
+      dsn: "${SENTRY_DSN}"
+      environment: "${NODE_ENV}"
+      
+    # New Relic para APM
+    newrelic:
+      enabled: true
+      license_key: "${NEW_RELIC_LICENSE_KEY}"
+      app_name: "[[PROJECT_NAME]]"
+
+# Configuración de ambientes
+environments:
+  # Configuración para desarrollo
+  development:
+    database:
+      host: "localhost"
+      port: 5432
+      name: "[[PROJECT_NAME]]_dev"
+      
+    api:
+      base_url: "http://localhost:3000"
+      timeout: 30000
+      
+    features:
+      debug_mode: true
+      hot_reload: true
+      verbose_logging: true
+      
+  # Configuración para staging
+  staging:
+    database:
+      host: "${STAGING_DB_HOST}"
+      port: 5432
+      name: "[[PROJECT_NAME]]_staging"
+      
+    api:
+      base_url: "https://staging-api.example.com"
+      timeout: 15000
+      
+    features:
+      debug_mode: false
+      hot_reload: false
+      verbose_logging: false
+      
+  # Configuración para producción
+  production:
+    database:
+      host: "${PROD_DB_HOST}"
+      port: 5432
+      name: "[[PROJECT_NAME]]_prod"
+      
+    api:
+      base_url: "https://api.example.com"
+      timeout: 10000
+      
+    features:
+      debug_mode: false
+      hot_reload: false
+      verbose_logging: false
+
+# Configuración de métricas personalizadas
+metrics:
+  # Métricas de desarrollo
+  development:
+    # Métricas de código
+    code_metrics:
+      - "lines_of_code"
+      - "cyclomatic_complexity"
+      - "test_coverage"
+      - "code_duplication"
+      
+    # Métricas de productividad
+    productivity_metrics:
+      - "commit_frequency"
+      - "pr_cycle_time"
+      - "bug_resolution_time"
+      - "feature_delivery_time"
+      
+  # Métricas de calidad
+  quality:
+    # Umbrales de calidad
+    thresholds:
+      test_coverage: 80
+      cyclomatic_complexity: 10
+      code_duplication: 5
+      
+    # Métricas de performance
+    performance:
+      response_time: 200
+      throughput: 1000
+      error_rate: 0.01
+      
+  # Métricas de negocio
+  business:
+    # KPIs específicos del proyecto
+    kpis:
+      - "user_satisfaction"
+      - "feature_adoption"
+      - "system_availability"
+      - "deployment_frequency"
+
+# Configuración de notificaciones
+notifications:
+  # Configuración de alertas
+  alerts:
+    # Alertas de desarrollo
+    development:
+      build_failures: true
+      test_failures: true
+      security_vulnerabilities: true
+      
+    # Alertas de producción
+    production:
+      system_errors: true
+      performance_degradation: true
+      security_incidents: true
+      
+  # Canales de notificación
+  channels:
+    email:
+      enabled: true
+      recipients: ["[[AUTHOR_EMAIL]]", "team@example.com"]
+      
+    slack:
+      enabled: true
+      webhook: "${SLACK_WEBHOOK_URL}"
+      channel: "#alerts"
+      
+    sms:
+      enabled: false
+      numbers: ["+1234567890"]
+
+# Configuración de backup y recuperación
+backup:
+  # Configuración de backup
+  database:
+    enabled: true
+    frequency: "daily"
+    retention: 30
+    
+  # Configuración de código
+  code:
+    enabled: true
+    frequency: "on_commit"
+    retention: 90
+    
+  # Configuración de assets
+  assets:
+    enabled: true
+    frequency: "weekly"
+    retention: 12
+
+# Configuración de seguridad personalizada
+security:
+  # Configuración de autenticación
+  authentication:
+    method: "jwt"
+    expiration: 3600
+    refresh_token: true
+    
+  # Configuración de autorización
+  authorization:
+    method: "rbac"
+    roles: ["admin", "user", "guest"]
+    
+  # Configuración de auditoría
+  audit:
+    enabled: true
+    log_level: "detailed"
+    retention: 365
+    
+  # Configuración de encriptación
+  encryption:
+    algorithm: "AES-256"
+    key_rotation: true
+    frequency: 90
+
+# Configuración de API específica
+api:
+  # Configuración de versionado
+  versioning:
+    strategy: "header"
+    current_version: "v1"
+    supported_versions: ["v1"]
+    
+  # Configuración de rate limiting
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 100
+    burst_limit: 200
+    
+  # Configuración de CORS
+  cors:
+    enabled: true
+    allowed_origins: ["https://example.com", "https://app.example.com"]
+    allowed_methods: ["GET", "POST", "PUT", "DELETE"]
+    
+  # Configuración de documentación
+  documentation:
+    format: "openapi"
+    version: "3.0.0"
+    auto_generate: true
+
+# Configuración de base de datos
+database:
+  # Configuración de conexión
+  connection:
+    pool_size: 10
+    timeout: 30
+    retry_attempts: 3
+    
+  # Configuración de migraciones
+  migrations:
+    directory: "migrations"
+    table: "schema_migrations"
+    
+  # Configuración de índices
+  indexes:
+    auto_create: true
+    analyze_performance: true
+
+# Variables de entorno específicas
+environment_variables:
+  # Variables requeridas
+  required:
+    - "DATABASE_URL"
+    - "JWT_SECRET"
+    - "API_KEY"
+    
+  # Variables opcionales
+  optional:
+    - "REDIS_URL"
+    - "SENTRY_DSN"
+    - "NEW_RELIC_LICENSE_KEY"
+    
+  # Variables por ambiente
+  development:
+    - "DEBUG=true"
+    - "NODE_ENV=development"
+    
+  production:
+    - "DEBUG=false"
+    - "NODE_ENV=production"
+
+# Configuración de logging personalizada
+logging:
+  # Configuración general
+  level: "info"
+  format: "json"
+  
+  # Configuración por ambiente
+  development:
+    level: "debug"
+    format: "pretty"
+    
+  production:
+    level: "warn"
+    format: "json"
+    
+  # Configuración de transports
+  transports:
+    console:
+      enabled: true
+      level: "info"
+      
+    file:
+      enabled: true
+      level: "error"
+      path: "logs/error.log"
+      
+    external:
+      enabled: false
+      service: "elasticsearch"
+      index: "[[PROJECT_NAME]]-logs"
+
+# Configuración de cache
+cache:
+  # Configuración de Redis
+  redis:
+    enabled: true
+    host: "${REDIS_HOST}"
+    port: 6379
+    ttl: 3600
+    
+  # Configuración de memoria
+  memory:
+    enabled: true
+    max_size: "100mb"
+    ttl: 300
+    
+  # Configuración de CDN
+  cdn:
+    enabled: false
+    provider: "cloudflare"
+    zone_id: "${CDN_ZONE_ID}"
+
+# Configuración de deployment personalizada
+deployment:
+  # Configuración de Docker
+  docker:
+    enabled: true
+    registry: "gcr.io"
+    image_name: "[[PROJECT_NAME]]"
+    
+  # Configuración de Kubernetes
+  kubernetes:
+    enabled: true
+    namespace: "[[PROJECT_NAME]]"
+    replicas: 3
+    
+  # Configuración de CI/CD
+  ci_cd:
+    provider: "github_actions"
+    deploy_on_merge: true
+    auto_rollback: true
+
+---
+# Metadata del archivo
+metadata:
+  version: "1.0.0"
+  created_by: "[[AUTHOR_NAME]]"
+  created_at: "2024-01-01"
+  last_updated: "2024-01-01"
+  
+# Notas para el equipo
+notes: |
+  Esta configuración es específica para el proyecto [[PROJECT_NAME]].
+  Personaliza los valores según las necesidades del proyecto.
+  
+  Para actualizar esta configuración:
+  1. Edita los valores necesarios
+  2. Ejecuta ./tools/update-config.sh
+  3. Verifica que Claude Code reconoce los cambios
+  4. Commit los cambios al repositorio
+  
+  Mantén este archivo sincronizado con el equipo de desarrollo.

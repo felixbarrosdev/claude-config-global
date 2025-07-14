@@ -1,0 +1,660 @@
+# Bug Fixing Workflow
+# Flujo de trabajo para resolución de bugs
+
+name: Bug Fixing
+description: Workflow sistemático para identificar, resolver y prevenir bugs
+version: 1.0.0
+
+# Configuración del workflow
+workflow:
+  trigger:
+    - bug_report
+    - error_alert
+    - user_complaint
+    - monitoring_alert
+  
+  phases:
+    - triage
+    - investigation
+    - resolution
+    - testing
+    - deployment
+    - post_mortem
+
+# Clasificación de severidad
+severity_levels:
+  critical:
+    description: "Sistema caído, pérdida de datos, vulnerabilidad de seguridad"
+    response_time: "30 minutos"
+    resolution_time: "4 horas"
+    escalation: "Inmediata"
+    
+  high:
+    description: "Funcionalidad importante no funciona, impacto en usuarios"
+    response_time: "2 horas"
+    resolution_time: "24 horas"
+    escalation: "2 horas"
+    
+  medium:
+    description: "Funcionalidad menor no funciona, workaround disponible"
+    response_time: "1 día"
+    resolution_time: "1 semana"
+    escalation: "1 día"
+    
+  low:
+    description: "Mejoras, bugs cosméticos, optimizaciones"
+    response_time: "1 semana"
+    resolution_time: "1 mes"
+    escalation: "1 semana"
+
+# Fases del workflow
+phases:
+  # Fase 1: Triage
+  triage:
+    name: "Triage y Clasificación"
+    description: "Evaluación inicial y clasificación del bug"
+    duration: "15-30 minutos"
+    
+    tasks:
+      - task: initial_assessment
+        name: "Evaluación Inicial"
+        description: "Evaluación rápida del bug reportado"
+        owner: "support_engineer"
+        deliverables:
+          - "Severidad clasificada"
+          - "Impacto evaluado"
+          - "Urgencia determinada"
+        
+        checklist:
+          - "¿Se puede reproducir el bug?"
+          - "¿Cuál es el impacto en usuarios?"
+          - "¿Afecta funcionalidad crítica?"
+          - "¿Hay workaround disponible?"
+          - "¿Es un bug o un feature request?"
+      
+      - task: gather_information
+        name: "Recopilar Información"
+        description: "Recopilar toda la información relevante"
+        owner: "support_engineer"
+        deliverables:
+          - "Pasos para reproducir"
+          - "Logs relevantes"
+          - "Información de ambiente"
+          - "Datos de usuario afectado"
+        
+        checklist:
+          - "¿Pasos de reproducción son claros?"
+          - "¿Se han recopilado logs relevantes?"
+          - "¿Información de ambiente está completa?"
+          - "¿Se conoce el impacto en usuarios?"
+      
+      - task: assign_priority
+        name: "Asignar Prioridad"
+        description: "Determinar prioridad basada en impacto y urgencia"
+        owner: "product_owner"
+        deliverables:
+          - "Prioridad asignada"
+          - "Justificación de prioridad"
+          - "Timeline inicial"
+        
+        checklist:
+          - "¿Prioridad refleja impacto real?"
+          - "¿Se ha considerado urgencia de negocio?"
+          - "¿Timeline es realista?"
+          - "¿Stakeholders están informados?"
+      
+      - task: assign_to_team
+        name: "Asignar a Equipo"
+        description: "Asignar bug al equipo apropiado"
+        owner: "team_lead"
+        deliverables:
+          - "Equipo asignado"
+          - "Desarrollador responsable"
+          - "Notificaciones enviadas"
+        
+        checklist:
+          - "¿Equipo correcto para el tipo de bug?"
+          - "¿Desarrollador tiene conocimiento del área?"
+          - "¿Capacidad del equipo es suficiente?"
+          - "¿Escalation path está definido?"
+
+  # Fase 2: Investigación
+  investigation:
+    name: "Investigación"
+    description: "Análisis detallado y root cause analysis"
+    duration: "2-8 horas"
+    
+    tasks:
+      - task: reproduce_bug
+        name: "Reproducir Bug"
+        description: "Reproducir el bug en ambiente controlado"
+        owner: "developer"
+        deliverables:
+          - "Bug reproducido"
+          - "Ambiente de reproducción"
+          - "Condiciones específicas"
+        
+        checklist:
+          - "¿Bug se reproduce consistentemente?"
+          - "¿Se han identificado precondiciones?"
+          - "¿Ambiente de reproducción es similar a producción?"
+          - "¿Se pueden crear tests automatizados?"
+      
+      - task: analyze_code
+        name: "Analizar Código"
+        description: "Revisar código relacionado con el bug"
+        owner: "developer"
+        deliverables:
+          - "Código problemático identificado"
+          - "Análisis de causa raíz"
+          - "Áreas de impacto"
+        
+        checklist:
+          - "¿Se ha identificado el código problemático?"
+          - "¿Se entiende por qué falla?"
+          - "¿Se han revisado cambios recientes?"
+          - "¿Hay otros lugares con problema similar?"
+      
+      - task: check_logs_monitoring
+        name: "Revisar Logs y Monitoreo"
+        description: "Analizar logs y métricas de monitoreo"
+        owner: "sre_engineer"
+        deliverables:
+          - "Análisis de logs"
+          - "Métricas relevantes"
+          - "Patrones identificados"
+        
+        checklist:
+          - "¿Logs muestran el momento del error?"
+          - "¿Métricas indican anomalías?"
+          - "¿Se han identificado patrones?"
+          - "¿Correlación con otros eventos?"
+      
+      - task: identify_root_cause
+        name: "Identificar Causa Raíz"
+        description: "Determinar la causa fundamental del bug"
+        owner: "senior_developer"
+        deliverables:
+          - "Causa raíz identificada"
+          - "Análisis de impacto"
+          - "Alcance del problema"
+        
+        checklist:
+          - "¿Se ha identificado la causa real?"
+          - "¿Se entiende cómo se introdujo?"
+          - "¿Se conoce el alcance completo?"
+          - "¿Se han identificado bugs similares?"
+      
+      - task: assess_impact
+        name: "Evaluar Impacto"
+        description: "Evaluar impacto completo del bug"
+        owner: "tech_lead"
+        deliverables:
+          - "Análisis de impacto"
+          - "Sistemas afectados"
+          - "Usuarios impactados"
+        
+        checklist:
+          - "¿Se conoce el impacto completo?"
+          - "¿Se han identificado todos los sistemas afectados?"
+          - "¿Se sabe cuántos usuarios están afectados?"
+          - "¿Hay riesgos de seguridad o datos?"
+
+  # Fase 3: Resolución
+  resolution:
+    name: "Resolución"
+    description: "Desarrollo e implementación de la solución"
+    duration: "2-16 horas"
+    
+    tasks:
+      - task: design_solution
+        name: "Diseñar Solución"
+        description: "Diseñar la solución al problema"
+        owner: "senior_developer"
+        deliverables:
+          - "Diseño de solución"
+          - "Alternativas consideradas"
+          - "Plan de implementación"
+        
+        checklist:
+          - "¿Solución aborda la causa raíz?"
+          - "¿Se han considerado alternativas?"
+          - "¿Solución es simple y efectiva?"
+          - "¿No introduce nuevos problemas?"
+      
+      - task: implement_fix
+        name: "Implementar Fix"
+        description: "Desarrollar la solución"
+        owner: "developer"
+        deliverables:
+          - "Código corregido"
+          - "Tests para el bug"
+          - "Documentación actualizada"
+        
+        checklist:
+          - "¿Fix es mínimo y enfocado?"
+          - "¿Se han añadido tests?"
+          - "¿Código sigue estándares?"
+          - "¿Se ha documentado el cambio?"
+      
+      - task: local_testing
+        name: "Testing Local"
+        description: "Probar la solución localmente"
+        owner: "developer"
+        deliverables:
+          - "Tests locales ejecutados"
+          - "Bug fix verificado"
+          - "Regression testing"
+        
+        checklist:
+          - "¿Bug original está corregido?"
+          - "¿Tests existentes siguen pasando?"
+          - "¿No hay nuevos bugs introducidos?"
+          - "¿Performance no se degradó?"
+      
+      - task: code_review
+        name: "Code Review"
+        description: "Revisión del código por pares"
+        owner: "senior_developer"
+        deliverables:
+          - "Código revisado"
+          - "Aprobación de cambios"
+          - "Sugerencias implementadas"
+        
+        checklist:
+          - "¿Solución es correcta?"
+          - "¿Código es mantenible?"
+          - "¿Se siguen mejores prácticas?"
+          - "¿Documentación está actualizada?"
+      
+      - task: prepare_deployment
+        name: "Preparar Deployment"
+        description: "Preparar el deployment del fix"
+        owner: "devops_engineer"
+        deliverables:
+          - "Plan de deployment"
+          - "Scripts de deployment"
+          - "Plan de rollback"
+        
+        checklist:
+          - "¿Plan de deployment está completo?"
+          - "¿Scripts están probados?"
+          - "¿Plan de rollback está listo?"
+          - "¿Stakeholders están informados?"
+
+  # Fase 4: Testing
+  testing:
+    name: "Testing"
+    description: "Pruebas exhaustivas del fix"
+    duration: "2-4 horas"
+    
+    tasks:
+      - task: regression_testing
+        name: "Tests de Regresión"
+        description: "Ejecutar tests de regresión"
+        owner: "qa_engineer"
+        deliverables:
+          - "Tests de regresión ejecutados"
+          - "Resultados de tests"
+          - "Bugs encontrados"
+        
+        checklist:
+          - "¿Todos los tests de regresión pasan?"
+          - "¿No hay nuevos bugs introducidos?"
+          - "¿Funcionalidad relacionada no se afectó?"
+          - "¿Performance es aceptable?"
+      
+      - task: bug_verification
+        name: "Verificación de Bug"
+        description: "Verificar que el bug original está corregido"
+        owner: "qa_engineer"
+        deliverables:
+          - "Bug verificado como corregido"
+          - "Casos de test actualizados"
+          - "Evidencia de corrección"
+        
+        checklist:
+          - "¿Bug original está corregido?"
+          - "¿Se probaron todos los casos edge?"
+          - "¿Solución funciona en todos los ambientes?"
+          - "¿Tests automatizados agregados?"
+      
+      - task: user_acceptance_testing
+        name: "User Acceptance Testing"
+        description: "Validación con usuarios o product owner"
+        owner: "product_owner"
+        deliverables:
+          - "UAT completado"
+          - "Aprobación del fix"
+          - "Feedback incorporado"
+        
+        checklist:
+          - "¿Usuario confirma que bug está corregido?"
+          - "¿Solución cumple expectativas?"
+          - "¿No hay impacto negativo en UX?"
+          - "¿Documentación de usuario actualizada?"
+      
+      - task: performance_testing
+        name: "Tests de Performance"
+        description: "Verificar impacto en performance"
+        owner: "performance_engineer"
+        deliverables:
+          - "Benchmarks de performance"
+          - "Comparación antes/después"
+          - "Análisis de impacto"
+        
+        checklist:
+          - "¿Performance no se degradó?"
+          - "¿Métricas están dentro de SLAs?"
+          - "¿No hay nuevos bottlenecks?"
+          - "¿Resource usage es aceptable?"
+
+  # Fase 5: Deployment
+  deployment:
+    name: "Deployment"
+    description: "Despliegue del fix a producción"
+    duration: "0.5-2 horas"
+    
+    tasks:
+      - task: staging_deployment
+        name: "Deploy a Staging"
+        description: "Desplegar fix a staging"
+        owner: "devops_engineer"
+        deliverables:
+          - "Fix en staging"
+          - "Verificación en staging"
+          - "Smoke tests"
+        
+        checklist:
+          - "¿Deployment a staging exitoso?"
+          - "¿Fix funciona en staging?"
+          - "¿Smoke tests pasan?"
+          - "¿Ambiente staging es similar a producción?"
+      
+      - task: production_deployment
+        name: "Deploy a Producción"
+        description: "Desplegar fix a producción"
+        owner: "devops_engineer"
+        deliverables:
+          - "Fix en producción"
+          - "Verificación en producción"
+          - "Monitoring activo"
+        
+        checklist:
+          - "¿Deployment a producción exitoso?"
+          - "¿Fix funciona en producción?"
+          - "¿Monitoring está activo?"
+          - "¿Alertas están configuradas?"
+      
+      - task: post_deployment_verification
+        name: "Verificación Post-Deployment"
+        description: "Verificar que fix funciona en producción"
+        owner: "sre_engineer"
+        deliverables:
+          - "Verificación en producción"
+          - "Métricas post-deployment"
+          - "Health checks"
+        
+        checklist:
+          - "¿Bug está corregido en producción?"
+          - "¿Sistema está estable?"
+          - "¿Métricas son normales?"
+          - "¿No hay nuevas alertas?"
+      
+      - task: notify_stakeholders
+        name: "Notificar Stakeholders"
+        description: "Informar a stakeholders sobre la resolución"
+        owner: "product_owner"
+        deliverables:
+          - "Notificaciones enviadas"
+          - "Status actualizado"
+          - "Comunicación a usuarios"
+        
+        checklist:
+          - "¿Stakeholders están informados?"
+          - "¿Status del bug actualizado?"
+          - "¿Usuarios afectados notificados?"
+          - "¿Documentación actualizada?"
+
+  # Fase 6: Post-Mortem
+  post_mortem:
+    name: "Post-Mortem"
+    description: "Análisis post-resolución para prevenir futuros bugs"
+    duration: "1-2 horas"
+    
+    tasks:
+      - task: root_cause_analysis
+        name: "Análisis de Causa Raíz"
+        description: "Análisis profundo de por qué ocurrió el bug"
+        owner: "tech_lead"
+        deliverables:
+          - "Documento de RCA"
+          - "Timeline de eventos"
+          - "Factores contribuyentes"
+        
+        checklist:
+          - "¿Se identificó la causa raíz real?"
+          - "¿Se entiende cómo se introdujo?"
+          - "¿Se identificaron factores contribuyentes?"
+          - "¿Timeline de eventos es claro?"
+      
+      - task: identify_prevention_measures
+        name: "Identificar Medidas de Prevención"
+        description: "Identificar cómo prevenir bugs similares"
+        owner: "senior_developer"
+        deliverables:
+          - "Medidas de prevención"
+          - "Mejoras de proceso"
+          - "Herramientas adicionales"
+        
+        checklist:
+          - "¿Se identificaron medidas de prevención?"
+          - "¿Mejoras de proceso están definidas?"
+          - "¿Herramientas adicionales son necesarias?"
+          - "¿Training adicional es requerido?"
+      
+      - task: update_processes
+        name: "Actualizar Procesos"
+        description: "Actualizar procesos y documentación"
+        owner: "process_owner"
+        deliverables:
+          - "Procesos actualizados"
+          - "Documentación mejorada"
+          - "Checklists actualizados"
+        
+        checklist:
+          - "¿Procesos están actualizados?"
+          - "¿Documentación refleja cambios?"
+          - "¿Checklists incluyen nuevas verificaciones?"
+          - "¿Cambios están comunicados?"
+      
+      - task: implement_improvements
+        name: "Implementar Mejoras"
+        description: "Implementar mejoras identificadas"
+        owner: "team_lead"
+        deliverables:
+          - "Mejoras implementadas"
+          - "Nuevas herramientas configuradas"
+          - "Training realizado"
+        
+        checklist:
+          - "¿Mejoras están implementadas?"
+          - "¿Nuevas herramientas funcionan?"
+          - "¿Equipo está entrenado?"
+          - "¿Efectividad será medida?"
+      
+      - task: share_learnings
+        name: "Compartir Aprendizajes"
+        description: "Compartir lecciones aprendidas con el equipo"
+        owner: "tech_lead"
+        deliverables:
+          - "Sesión de sharing"
+          - "Documentación de learnings"
+          - "Knowledge base actualizada"
+        
+        checklist:
+          - "¿Learnings están documentados?"
+          - "¿Sesión de sharing realizada?"
+          - "¿Knowledge base actualizada?"
+          - "¿Otros equipos informados?"
+
+# Criterios de calidad por fase
+quality_gates:
+  triage:
+    - "Severidad correctamente clasificada"
+    - "Información suficiente recopilada"
+    - "Equipo apropiado asignado"
+    - "Timeline realista establecido"
+  
+  investigation:
+    - "Bug reproducido consistentemente"
+    - "Causa raíz identificada"
+    - "Impacto completamente entendido"
+    - "Solución diseñada"
+  
+  resolution:
+    - "Fix implementado correctamente"
+    - "Tests añadidos para prevenir regresión"
+    - "Code review aprobado"
+    - "Documentación actualizada"
+  
+  testing:
+    - "Bug verificado como corregido"
+    - "Tests de regresión pasan"
+    - "Performance no degradada"
+    - "UAT aprobado"
+  
+  deployment:
+    - "Deployment exitoso"
+    - "Fix funciona en producción"
+    - "Monitoring confirma estabilidad"
+    - "Stakeholders notificados"
+  
+  post_mortem:
+    - "Causa raíz documentada"
+    - "Medidas de prevención identificadas"
+    - "Procesos actualizados"
+    - "Aprendizajes compartidos"
+
+# Métricas de bug fixing
+metrics:
+  response_time:
+    critical: "30 minutos"
+    high: "2 horas"
+    medium: "1 día"
+    low: "1 semana"
+  
+  resolution_time:
+    critical: "4 horas"
+    high: "24 horas"
+    medium: "1 semana"
+    low: "1 mes"
+  
+  quality_metrics:
+    first_time_fix_rate: ">90%"
+    regression_rate: "<5%"
+    customer_satisfaction: ">4/5"
+    mean_time_to_resolution: "<24 horas"
+  
+  prevention_metrics:
+    repeat_bug_rate: "<10%"
+    similar_bug_rate: "<15%"
+    process_improvement_rate: "1 por mes"
+    knowledge_sharing_sessions: "1 por sprint"
+
+# Herramientas recomendadas
+tools:
+  bug_tracking:
+    - "Jira para tracking de bugs"
+    - "GitHub Issues para bugs de código"
+    - "Zendesk para user reports"
+    - "Slack para comunicación"
+  
+  investigation:
+    - "Logs: ELK Stack, Splunk"
+    - "Monitoring: Prometheus, Grafana"
+    - "APM: New Relic, Datadog"
+    - "Debugger: IDE integrated"
+  
+  testing:
+    - "Automated testing: Jest, Cypress"
+    - "Performance: JMeter, LoadRunner"
+    - "Security: OWASP ZAP, SonarQube"
+    - "Regression: Selenium, Playwright"
+  
+  deployment:
+    - "CI/CD: Jenkins, GitHub Actions"
+    - "Containers: Docker, Kubernetes"
+    - "Infrastructure: Terraform, Ansible"
+    - "Monitoring: Prometheus, Grafana"
+
+# Comunicación y escalation
+communication:
+  severity_based_escalation:
+    critical:
+      - "Immediate notification to on-call engineer"
+      - "Incident commander assigned"
+      - "Executive notification within 1 hour"
+      - "Customer communication within 2 hours"
+    
+    high:
+      - "Team lead notified within 30 minutes"
+      - "Product owner informed within 2 hours"
+      - "Customer communication within 24 hours"
+      - "Management update within 1 day"
+    
+    medium:
+      - "Team notified within 1 day"
+      - "Product owner informed within 1 week"
+      - "Customer communication as needed"
+      - "Regular updates in sprint reviews"
+    
+    low:
+      - "Added to backlog"
+      - "Prioritized in planning"
+      - "Addressed in regular sprint"
+      - "Communicated in release notes"
+  
+  status_updates:
+    - "Hourly updates for critical bugs"
+    - "Daily updates for high priority bugs"
+    - "Weekly updates for medium priority bugs"
+    - "Sprint updates for low priority bugs"
+  
+  post_resolution:
+    - "Resolution notification to reporters"
+    - "Status update to stakeholders"
+    - "Post-mortem summary to team"
+    - "Lessons learned documentation"
+
+# Templates
+templates:
+  bug_report:
+    - "Title: Clear, descriptive title"
+    - "Description: Detailed description"
+    - "Steps to reproduce: Numbered steps"
+    - "Expected behavior: What should happen"
+    - "Actual behavior: What actually happens"
+    - "Environment: OS, browser, version"
+    - "Screenshots: Visual evidence"
+    - "Additional context: Any other info"
+  
+  root_cause_analysis:
+    - "Timeline: Sequence of events"
+    - "Root cause: Fundamental cause"
+    - "Contributing factors: Other factors"
+    - "Impact: Effect on users/business"
+    - "Resolution: How it was fixed"
+    - "Prevention: How to prevent recurrence"
+    - "Lessons learned: Key takeaways"
+    - "Action items: Next steps"
+  
+  post_mortem_report:
+    - "Executive summary"
+    - "Timeline of events"
+    - "Root cause analysis"
+    - "Impact assessment"
+    - "Response evaluation"
+    - "Prevention measures"
+    - "Action items"
+    - "Lessons learned"

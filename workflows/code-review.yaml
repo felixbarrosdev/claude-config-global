@@ -1,0 +1,705 @@
+# Code Review Workflow
+# Flujo de trabajo para revisión de código
+
+name: Code Review
+description: Proceso sistemático para revisión de código de calidad
+version: 1.0.0
+
+# Configuración del workflow
+workflow:
+  trigger:
+    - pull_request_created
+    - merge_request_created
+    - code_ready_for_review
+  
+  phases:
+    - preparation
+    - review
+    - feedback
+    - resolution
+    - approval
+    - merge
+
+# Tipos de revisión
+review_types:
+  feature_review:
+    description: "Revisión de nueva funcionalidad"
+    min_reviewers: 2
+    required_approvals: 2
+    focus_areas: ["functionality", "design", "tests", "documentation"]
+  
+  bug_fix_review:
+    description: "Revisión de corrección de bugs"
+    min_reviewers: 1
+    required_approvals: 1
+    focus_areas: ["root_cause", "solution", "tests", "regression"]
+  
+  refactoring_review:
+    description: "Revisión de refactoring"
+    min_reviewers: 2
+    required_approvals: 2
+    focus_areas: ["maintainability", "performance", "tests", "backward_compatibility"]
+  
+  hotfix_review:
+    description: "Revisión de hotfix crítico"
+    min_reviewers: 1
+    required_approvals: 1
+    focus_areas: ["minimal_change", "risk_assessment", "rollback_plan"]
+  
+  security_review:
+    description: "Revisión con foco en seguridad"
+    min_reviewers: 2
+    required_approvals: 2
+    focus_areas: ["security", "vulnerabilities", "data_protection", "compliance"]
+
+# Roles y responsabilidades
+roles:
+  author:
+    responsibilities:
+      - "Crear PR/MR con información completa"
+      - "Responder a feedback de manera constructiva"
+      - "Implementar cambios solicitados"
+      - "Mantener PR actualizado"
+    
+  reviewer:
+    responsibilities:
+      - "Revisar código de manera exhaustiva"
+      - "Proporcionar feedback constructivo"
+      - "Verificar funcionalidad y calidad"
+      - "Aprobar cuando estándares se cumplan"
+    
+  tech_lead:
+    responsibilities:
+      - "Asignar reviewers apropiados"
+      - "Resolver conflictos de revisión"
+      - "Hacer revisión final de arquitectura"
+      - "Tomar decisiones sobre merge"
+    
+  security_engineer:
+    responsibilities:
+      - "Revisar aspectos de seguridad"
+      - "Identificar vulnerabilidades"
+      - "Validar implementación de controles"
+      - "Aprobar cambios con impacto de seguridad"
+
+# Fases del workflow
+phases:
+  # Fase 1: Preparación
+  preparation:
+    name: "Preparación"
+    description: "Preparación del código para revisión"
+    duration: "30 minutos"
+    
+    tasks:
+      - task: self_review
+        name: "Auto-revisión"
+        description: "Revisar el propio código antes de enviarlo"
+        owner: "author"
+        deliverables:
+          - "Código auto-revisado"
+          - "Checklist completado"
+          - "Commits organizados"
+        
+        checklist:
+          - "¿El código compila sin errores?"
+          - "¿Todos los tests pasan?"
+          - "¿Código sigue estándares de formato?"
+          - "¿Commits tienen mensajes descriptivos?"
+          - "¿Se eliminaron comentarios de debug?"
+          - "¿Imports/dependencies están limpios?"
+      
+      - task: create_pr_mr
+        name: "Crear PR/MR"
+        description: "Crear pull request o merge request"
+        owner: "author"
+        deliverables:
+          - "PR/MR creado"
+          - "Descripción completa"
+          - "Reviewers asignados"
+        
+        checklist:
+          - "¿Título es descriptivo?"
+          - "¿Descripción explica qué y por qué?"
+          - "¿Se incluyen screenshots si es UI?"
+          - "¿Se mencionan issues relacionados?"
+          - "¿Reviewers apropiados asignados?"
+          - "¿Labels correctos añadidos?"
+      
+      - task: run_automated_checks
+        name: "Ejecutar Checks Automáticos"
+        description: "Ejecutar linting, tests y análisis automático"
+        owner: "ci_system"
+        deliverables:
+          - "Linting completo"
+          - "Tests ejecutados"
+          - "Análisis de seguridad"
+          - "Cobertura de código"
+        
+        checklist:
+          - "¿Linting pasa sin errores?"
+          - "¿Todos los tests unitarios pasan?"
+          - "¿Tests de integración pasan?"
+          - "¿Cobertura cumple minimum threshold?"
+          - "¿Análisis de seguridad es limpio?"
+          - "¿Build es exitoso?"
+      
+      - task: assign_reviewers
+        name: "Asignar Reviewers"
+        description: "Asignar reviewers apropiados basado en el tipo de cambio"
+        owner: "tech_lead"
+        deliverables:
+          - "Reviewers asignados"
+          - "Revisión distribuida"
+          - "Timeline establecido"
+        
+        checklist:
+          - "¿Reviewers tienen expertise en el área?"
+          - "¿Número de reviewers es apropiado?"
+          - "¿Carga de trabajo está balanceada?"
+          - "¿Timeline es realista?"
+
+  # Fase 2: Revisión
+  review:
+    name: "Revisión"
+    description: "Revisión exhaustiva del código"
+    duration: "2-4 horas"
+    
+    tasks:
+      - task: functional_review
+        name: "Revisión Funcional"
+        description: "Revisar funcionalidad y lógica de negocio"
+        owner: "reviewer"
+        deliverables:
+          - "Análisis funcional"
+          - "Comentarios sobre lógica"
+          - "Validación de requisitos"
+        
+        checklist:
+          - "¿Código hace lo que debería hacer?"
+          - "¿Lógica de negocio es correcta?"
+          - "¿Se manejan casos edge?"
+          - "¿Validación de entrada es apropiada?"
+          - "¿Manejo de errores es adecuado?"
+          - "¿Performance es aceptable?"
+      
+      - task: code_quality_review
+        name: "Revisión de Calidad"
+        description: "Revisar calidad del código y mejores prácticas"
+        owner: "reviewer"
+        deliverables:
+          - "Análisis de calidad"
+          - "Sugerencias de mejora"
+          - "Identificación de code smells"
+        
+        checklist:
+          - "¿Código es legible y mantenible?"
+          - "¿Nombres de variables son descriptivos?"
+          - "¿Funciones tienen responsabilidad única?"
+          - "¿Se siguen principios SOLID?"
+          - "¿Hay duplicación de código?"
+          - "¿Complejidad es apropiada?"
+      
+      - task: security_review
+        name: "Revisión de Seguridad"
+        description: "Revisar aspectos de seguridad del código"
+        owner: "security_engineer"
+        deliverables:
+          - "Análisis de seguridad"
+          - "Identificación de vulnerabilidades"
+          - "Recomendaciones de seguridad"
+        
+        checklist:
+          - "¿Se validan todas las entradas?"
+          - "¿Se protegen datos sensibles?"
+          - "¿Autenticación/autorización es correcta?"
+          - "¿No hay SQL injection vulnerabilities?"
+          - "¿No hay XSS vulnerabilities?"
+          - "¿Secrets no están hardcodeados?"
+      
+      - task: test_review
+        name: "Revisión de Tests"
+        description: "Revisar calidad y cobertura de tests"
+        owner: "reviewer"
+        deliverables:
+          - "Análisis de tests"
+          - "Cobertura evaluada"
+          - "Calidad de tests"
+        
+        checklist:
+          - "¿Tests cubren la funcionalidad nueva?"
+          - "¿Tests son independientes?"
+          - "¿Tests son determinísticos?"
+          - "¿Se prueban casos edge?"
+          - "¿Se prueban casos de error?"
+          - "¿Tests son mantenibles?"
+      
+      - task: documentation_review
+        name: "Revisión de Documentación"
+        description: "Revisar documentación y comentarios"
+        owner: "reviewer"
+        deliverables:
+          - "Análisis de documentación"
+          - "Validación de comments"
+          - "Actualización de docs"
+        
+        checklist:
+          - "¿Código está apropiadamente documentado?"
+          - "¿Comentarios explican el 'por qué'?"
+          - "¿API documentation está actualizada?"
+          - "¿README refleja cambios?"
+          - "¿Changelog está actualizado?"
+      
+      - task: architecture_review
+        name: "Revisión de Arquitectura"
+        description: "Revisar diseño arquitectónico y patrones"
+        owner: "tech_lead"
+        deliverables:
+          - "Análisis arquitectónico"
+          - "Validación de patrones"
+          - "Impacto en sistema"
+        
+        checklist:
+          - "¿Diseño es consistente con arquitectura?"
+          - "¿Se siguen patrones establecidos?"
+          - "¿Acoplamiento es apropiado?"
+          - "¿Escalabilidad es considerada?"
+          - "¿Impacto en performance evaluado?"
+
+  # Fase 3: Feedback
+  feedback:
+    name: "Feedback"
+    description: "Comunicación de feedback entre reviewer y author"
+    duration: "1-2 horas"
+    
+    tasks:
+      - task: provide_feedback
+        name: "Proporcionar Feedback"
+        description: "Comunicar hallazgos y sugerencias"
+        owner: "reviewer"
+        deliverables:
+          - "Comentarios detallados"
+          - "Sugerencias específicas"
+          - "Priorización de cambios"
+        
+        checklist:
+          - "¿Feedback es específico y actionable?"
+          - "¿Tono es constructivo?"
+          - "¿Se proporciona contexto?"
+          - "¿Se sugieren alternativas?"
+          - "¿Prioridad está clara?"
+      
+      - task: categorize_feedback
+        name: "Categorizar Feedback"
+        description: "Clasificar feedback por tipo y prioridad"
+        owner: "reviewer"
+        deliverables:
+          - "Feedback categorizado"
+          - "Prioridades asignadas"
+          - "Must-fix vs nice-to-have"
+        
+        categories:
+          blocking:
+            - "Bugs críticos"
+            - "Vulnerabilidades de seguridad"
+            - "Violaciones de arquitectura"
+            - "Tests faltantes"
+          
+          important:
+            - "Code quality issues"
+            - "Performance problems"
+            - "Maintainability concerns"
+            - "Documentation gaps"
+          
+          suggestion:
+            - "Style improvements"
+            - "Minor optimizations"
+            - "Alternative approaches"
+            - "Future enhancements"
+      
+      - task: discuss_feedback
+        name: "Discutir Feedback"
+        description: "Discutir feedback complejo o controvertido"
+        owner: "author_and_reviewer"
+        deliverables:
+          - "Clarificaciones"
+          - "Decisiones acordadas"
+          - "Compromisos establecidos"
+        
+        checklist:
+          - "¿Feedback complejo se discutió?"
+          - "¿Decisiones están documentadas?"
+          - "¿Compromisos son claros?"
+          - "¿Timeline para cambios acordado?"
+
+  # Fase 4: Resolución
+  resolution:
+    name: "Resolución"
+    description: "Implementación de cambios solicitados"
+    duration: "2-6 horas"
+    
+    tasks:
+      - task: implement_changes
+        name: "Implementar Cambios"
+        description: "Implementar cambios solicitados en feedback"
+        owner: "author"
+        deliverables:
+          - "Cambios implementados"
+          - "Código actualizado"
+          - "Tests actualizados"
+        
+        checklist:
+          - "¿Cambios blocking implementados?"
+          - "¿Cambios important implementados?"
+          - "¿Tests actualizados apropiadamente?"
+          - "¿Documentación actualizada?"
+          - "¿Commits son atómicos?"
+      
+      - task: respond_to_feedback
+        name: "Responder a Feedback"
+        description: "Responder a comentarios y marcar como resueltos"
+        owner: "author"
+        deliverables:
+          - "Respuestas a comentarios"
+          - "Explicaciones de cambios"
+          - "Comments marcados como resueltos"
+        
+        checklist:
+          - "¿Todos los comentarios tienen respuesta?"
+          - "¿Cambios están explicados?"
+          - "¿Comments resolved apropiadamente?"
+          - "¿Disagreements están documentados?"
+      
+      - task: update_pr_mr
+        name: "Actualizar PR/MR"
+        description: "Actualizar PR/MR con cambios y información"
+        owner: "author"
+        deliverables:
+          - "PR/MR actualizado"
+          - "Descripción actualizada"
+          - "Changelog actualizado"
+        
+        checklist:
+          - "¿Descripción refleja cambios?"
+          - "¿Changelog está actualizado?"
+          - "¿Tests siguen pasando?"
+          - "¿Automated checks pasan?"
+      
+      - task: request_re_review
+        name: "Solicitar Re-revisión"
+        description: "Solicitar nueva revisión después de cambios"
+        owner: "author"
+        deliverables:
+          - "Re-review solicitado"
+          - "Reviewers notificados"
+          - "Cambios resumidos"
+        
+        checklist:
+          - "¿Reviewers están notificados?"
+          - "¿Cambios están resumidos?"
+          - "¿Scope de re-review está claro?"
+          - "¿Timeline para re-review comunicado?"
+
+  # Fase 5: Aprobación
+  approval:
+    name: "Aprobación"
+    description: "Aprobación final del código"
+    duration: "0.5-1 hora"
+    
+    tasks:
+      - task: final_review
+        name: "Revisión Final"
+        description: "Revisión final de cambios implementados"
+        owner: "reviewer"
+        deliverables:
+          - "Validación de cambios"
+          - "Confirmación de calidad"
+          - "Aprobación o feedback adicional"
+        
+        checklist:
+          - "¿Cambios solicitados implementados?"
+          - "¿Calidad es aceptable?"
+          - "¿No hay nuevos issues?"
+          - "¿Automated checks pasan?"
+      
+      - task: security_approval
+        name: "Aprobación de Seguridad"
+        description: "Aprobación final de aspectos de seguridad"
+        owner: "security_engineer"
+        deliverables:
+          - "Validación de seguridad"
+          - "Aprobación de seguridad"
+          - "Sign-off de security"
+        
+        checklist:
+          - "¿Security concerns resueltos?"
+          - "¿Vulnerabilities addressadas?"
+          - "¿Compliance requirements met?"
+          - "¿Security tests pasan?"
+      
+      - task: technical_approval
+        name: "Aprobación Técnica"
+        description: "Aprobación técnica final del tech lead"
+        owner: "tech_lead"
+        deliverables:
+          - "Validación técnica"
+          - "Aprobación arquitectónica"
+          - "Go/no-go decision"
+        
+        checklist:
+          - "¿Arquitectura es correcta?"
+          - "¿Patrones son apropiados?"
+          - "¿Performance es aceptable?"
+          - "¿Maintainability es adecuada?"
+      
+      - task: final_approval
+        name: "Aprobación Final"
+        description: "Aprobación final para merge"
+        owner: "tech_lead"
+        deliverables:
+          - "Aprobación final"
+          - "Merge authorization"
+          - "Deployment readiness"
+        
+        checklist:
+          - "¿Todas las aprobaciones recibidas?"
+          - "¿Quality gates cumplidos?"
+          - "¿Automated checks pasan?"
+          - "¿Ready for deployment?"
+
+  # Fase 6: Merge
+  merge:
+    name: "Merge"
+    description: "Merge del código a la rama principal"
+    duration: "15 minutos"
+    
+    tasks:
+      - task: pre_merge_checks
+        name: "Checks Pre-Merge"
+        description: "Verificaciones finales antes del merge"
+        owner: "ci_system"
+        deliverables:
+          - "Final tests ejecutados"
+          - "Merge conflicts resueltos"
+          - "Branch actualizada"
+        
+        checklist:
+          - "¿Todos los tests pasan?"
+          - "¿No hay merge conflicts?"
+          - "¿Branch está actualizada?"
+          - "¿Automated checks pasan?"
+      
+      - task: merge_code
+        name: "Merge Código"
+        description: "Realizar merge del código"
+        owner: "author_or_tech_lead"
+        deliverables:
+          - "Código merged"
+          - "Branch cerrada"
+          - "PR/MR cerrado"
+        
+        checklist:
+          - "¿Merge fue exitoso?"
+          - "¿Branch fue limpiada?"
+          - "¿PR/MR cerrado apropiadamente?"
+          - "¿Notifications enviadas?"
+      
+      - task: post_merge_verification
+        name: "Verificación Post-Merge"
+        description: "Verificar que merge fue exitoso"
+        owner: "ci_system"
+        deliverables:
+          - "Build post-merge"
+          - "Tests post-merge"
+          - "Deployment readiness"
+        
+        checklist:
+          - "¿Build post-merge exitoso?"
+          - "¿Tests post-merge pasan?"
+          - "¿No hay regresiones?"
+          - "¿Ready for deployment?"
+      
+      - task: update_tracking
+        name: "Actualizar Tracking"
+        description: "Actualizar sistemas de tracking"
+        owner: "author"
+        deliverables:
+          - "Issues actualizados"
+          - "Status actualizado"
+          - "Changelog actualizado"
+        
+        checklist:
+          - "¿Issues relacionados actualizados?"
+          - "¿Status de features actualizado?"
+          - "¿Changelog refleja cambios?"
+          - "¿Documentation actualizada?"
+
+# Criterios de calidad
+quality_gates:
+  preparation:
+    - "Automated checks pasan"
+    - "Self-review completado"
+    - "PR/MR description completo"
+    - "Reviewers apropiados asignados"
+  
+  review:
+    - "Funcionalidad validada"
+    - "Calidad de código aceptable"
+    - "Security review completado"
+    - "Tests apropiados incluidos"
+  
+  feedback:
+    - "Feedback específico y actionable"
+    - "Prioridades claras"
+    - "Communication constructiva"
+    - "Decisions documentadas"
+  
+  resolution:
+    - "Cambios blocking implementados"
+    - "Feedback addressado apropiadamente"
+    - "Tests actualizados"
+    - "Documentation actualizada"
+  
+  approval:
+    - "Todas las aprobaciones recibidas"
+    - "Quality gates cumplidos"
+    - "Security sign-off obtenido"
+    - "Technical approval recibido"
+  
+  merge:
+    - "Pre-merge checks pasan"
+    - "Merge exitoso"
+    - "Post-merge verification OK"
+    - "Tracking actualizado"
+
+# Estándares de revisión
+review_standards:
+  code_quality:
+    - "Código legible y mantenible"
+    - "Nombres descriptivos"
+    - "Funciones con responsabilidad única"
+    - "Principios SOLID seguidos"
+    - "Complejidad apropiada"
+    - "No duplicación de código"
+  
+  functionality:
+    - "Funcionalidad correcta"
+    - "Casos edge manejados"
+    - "Error handling apropiado"
+    - "Performance aceptable"
+    - "Validación de entrada"
+    - "Lógica de negocio correcta"
+  
+  security:
+    - "Input validation"
+    - "Output encoding"
+    - "Authentication/authorization"
+    - "Data protection"
+    - "No hardcoded secrets"
+    - "Secure configuration"
+  
+  testing:
+    - "Tests unitarios incluidos"
+    - "Cobertura apropiada"
+    - "Tests independientes"
+    - "Tests determinísticos"
+    - "Casos edge probados"
+    - "Tests mantenibles"
+  
+  documentation:
+    - "Código apropiadamente documentado"
+    - "API documentation actualizada"
+    - "README actualizado"
+    - "Changelog actualizado"
+    - "Comments útiles"
+    - "Architecture decisions documentadas"
+
+# Métricas de code review
+metrics:
+  efficiency:
+    - "Tiempo promedio de review: <4 horas"
+    - "Tiempo de response: <2 horas"
+    - "Número de rounds: <3"
+    - "Tiempo total del proceso: <1 día"
+  
+  quality:
+    - "Defect rate post-merge: <5%"
+    - "Regression rate: <3%"
+    - "Security issues found: 0"
+    - "Performance regressions: 0"
+  
+  participation:
+    - "Participation rate: >95%"
+    - "Review coverage: 100%"
+    - "Feedback quality score: >4/5"
+    - "Knowledge sharing: measurable"
+
+# Herramientas recomendadas
+tools:
+  code_review:
+    - "GitHub Pull Requests"
+    - "GitLab Merge Requests"
+    - "Bitbucket Pull Requests"
+    - "Azure DevOps Pull Requests"
+  
+  automated_checks:
+    - "Linting: ESLint, Prettier"
+    - "Testing: Jest, Cypress"
+    - "Security: SonarQube, Snyk"
+    - "Coverage: Istanbul, JaCoCo"
+  
+  communication:
+    - "Slack for notifications"
+    - "Teams for discussions"
+    - "Comments in PR/MR"
+    - "Video calls for complex issues"
+  
+  metrics:
+    - "GitHub Insights"
+    - "GitLab Analytics"
+    - "SonarQube metrics"
+    - "Custom dashboards"
+
+# Mejores prácticas
+best_practices:
+  for_authors:
+    - "Hacer self-review antes de solicitar review"
+    - "Mantener PRs pequeños y enfocados"
+    - "Proporcionar contexto en descripción"
+    - "Responder a feedback constructivamente"
+    - "Mantener PR actualizado"
+  
+  for_reviewers:
+    - "Ser constructivo y específico"
+    - "Enfocarse en código, no en persona"
+    - "Proporcionar alternativas"
+    - "Priorizar feedback"
+    - "Revisar de manera oportuna"
+  
+  for_teams:
+    - "Establecer estándares claros"
+    - "Usar checklists consistentemente"
+    - "Medir y mejorar proceso"
+    - "Compartir conocimiento"
+    - "Celebrar buenas prácticas"
+
+# Templates
+templates:
+  pr_description:
+    - "## What this PR does"
+    - "## Why this change is needed"
+    - "## How to test"
+    - "## Screenshots (if applicable)"
+    - "## Checklist"
+    - "## Related issues"
+  
+  review_comment:
+    - "**Issue**: [Description of the issue]"
+    - "**Suggestion**: [Specific suggestion]"
+    - "**Reason**: [Why this is important]"
+    - "**Alternative**: [Alternative approach if applicable]"
+  
+  approval_comment:
+    - "✅ **Approved**: Code meets all quality standards"
+    - "**Highlights**: [What was done well]"
+    - "**Minor suggestions**: [Non-blocking improvements]"
+    - "**Next steps**: [What happens next]"

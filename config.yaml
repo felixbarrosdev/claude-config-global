@@ -1,0 +1,235 @@
+# Claude Code Universal Configuration
+# Configuración universal para desarrollo con Claude Code
+# Versión: 1.0.0
+
+# Configuración principal
+project:
+  name: "Universal Development Project"
+  description: "Configuración universal para desarrollo con Claude Code"
+  version: "1.0.0"
+
+# Configuración de Claude Code
+claude:
+  # Configuración general
+  settings:
+    # Comportamiento por defecto
+    auto_save: true
+    confirm_actions: false
+    show_progress: true
+    
+    # Configuración de respuestas
+    response_style: "concise"
+    code_explanation: "minimal"
+    error_handling: "detailed"
+    
+    # Configuración de archivos
+    max_file_size: 1000000  # 1MB
+    ignored_extensions: [".log", ".tmp", ".cache", ".DS_Store"]
+    
+  # Contextos a cargar automáticamente
+  contexts:
+    - "context/development-patterns.md"
+    - "context/code-quality.md"
+    - "context/security-basics.md"
+    - "context/documentation-standards.md"
+    - "templates/project-context.md"
+    - "templates/team-standards.md"
+    
+  # Prompts disponibles
+  prompts:
+    code_review: "prompts/code-review.md"
+    documentation: "prompts/documentation.md"
+    debugging: "prompts/debugging.md"
+    refactoring: "prompts/refactoring.md"
+    architecture: "prompts/architecture-analysis.md"
+    
+  # Workflows automáticos
+  workflows:
+    feature_development: "workflows/feature-development.yaml"
+    bug_fixing: "workflows/bug-fixing.yaml"
+    code_review: "workflows/code-review.yaml"
+
+# Configuración de herramientas
+tools:
+  # Scripts de utilidad
+  setup_script: "tools/setup-project.sh"
+  update_script: "tools/update-config.sh"
+  detect_script: "tools/detect-project.sh"
+  
+  # Comandos automáticos
+  auto_commands:
+    - name: "lint"
+      pattern: "npm run lint|yarn lint|pnpm lint|make lint|./lint.sh"
+      description: "Ejecutar linter"
+    - name: "test"
+      pattern: "npm test|yarn test|pnpm test|make test|./test.sh"
+      description: "Ejecutar tests"
+    - name: "build"
+      pattern: "npm run build|yarn build|pnpm build|make build|./build.sh"
+      description: "Construir proyecto"
+    - name: "format"
+      pattern: "npm run format|yarn format|pnpm format|make format|./format.sh"
+      description: "Formatear código"
+
+# Configuración de patrones de archivos
+patterns:
+  # Archivos de configuración comunes
+  config_files:
+    - "package.json"
+    - "Cargo.toml"
+    - "go.mod"
+    - "requirements.txt"
+    - "Pipfile"
+    - "composer.json"
+    - "pom.xml"
+    - "build.gradle"
+    - "Makefile"
+    
+  # Archivos de documentación
+  documentation_files:
+    - "README.md"
+    - "CHANGELOG.md"
+    - "CONTRIBUTING.md"
+    - "docs/"
+    - "doc/"
+    
+  # Archivos de tests
+  test_files:
+    - "test/"
+    - "tests/"
+    - "spec/"
+    - "__tests__/"
+    - "*.test.*"
+    - "*.spec.*"
+    
+  # Archivos a ignorar
+  ignore_patterns:
+    - "node_modules/"
+    - "target/"
+    - "dist/"
+    - "build/"
+    - ".git/"
+    - ".cache/"
+    - "*.log"
+    - "*.tmp"
+
+# Configuración de desarrollo
+development:
+  # Estándares de código
+  code_standards:
+    max_line_length: 100
+    indentation: 2
+    trailing_whitespace: false
+    final_newline: true
+    
+  # Prácticas de seguridad
+  security:
+    check_secrets: true
+    validate_inputs: true
+    secure_defaults: true
+    
+  # Documentación
+  documentation:
+    inline_comments: "minimal"
+    function_docs: "required"
+    readme_sections: ["installation", "usage", "examples"]
+    
+  # Testing
+  testing:
+    coverage_threshold: 80
+    test_types: ["unit", "integration", "e2e"]
+    mock_external_services: true
+
+# Configuración de mensajes
+messages:
+  # Mensajes de bienvenida
+  welcome: |
+    🚀 Claude Config Global activado
+    Configuración universal para desarrollo cargada correctamente.
+    
+  # Mensajes de ayuda
+  help: |
+    Comandos disponibles:
+    - /review: Revisar código
+    - /docs: Generar documentación
+    - /debug: Ayuda con debugging
+    - /refactor: Refactorizar código
+    - /analyze: Analizar arquitectura
+    
+  # Mensajes de error
+  error: |
+    ❌ Error en configuración Claude Code
+    Verifica la estructura de archivos y ejecuta setup-project.sh
+    
+# Configuración de integración
+integration:
+  # Git hooks
+  git_hooks:
+    pre_commit: ["lint", "test"]
+    pre_push: ["build"]
+    
+  # CI/CD
+  ci_cd:
+    check_config: true
+    run_tests: true
+    build_project: true
+    
+  # Editores
+  editors:
+    vscode:
+      extensions: ["claude-code", "prettier", "eslint"]
+    vim:
+      plugins: ["coc.nvim", "ale"]
+    emacs:
+      packages: ["lsp-mode", "company"]
+
+# Configuración de templates
+templates:
+  # Variables disponibles
+  variables:
+    - name: "PROJECT_NAME"
+      description: "Nombre del proyecto"
+      default: "Mi Proyecto"
+    - name: "AUTHOR"
+      description: "Autor del proyecto"
+      default: "Desarrollador"
+    - name: "VERSION"
+      description: "Versión del proyecto"
+      default: "1.0.0"
+    - name: "LANGUAGE"
+      description: "Lenguaje principal"
+      default: "auto-detect"
+      
+  # Archivos de template
+  files:
+    project_context: "templates/project-context.md"
+    team_standards: "templates/team-standards.md"
+    custom_config: "templates/custom-config.yaml"
+
+# Configuración de logging
+logging:
+  level: "info"
+  format: "structured"
+  output: "console"
+  
+# Configuración de cache
+cache:
+  enabled: true
+  ttl: 3600  # 1 hora
+  size: 100  # MB
+  
+# Configuración de red
+network:
+  timeout: 30  # segundos
+  retries: 3
+  
+# Configuración de notificaciones
+notifications:
+  enabled: true
+  types: ["error", "success", "warning"]
+  
+# Configuración de backup
+backup:
+  enabled: false
+  interval: 86400  # 24 horas
+  keep: 7  # días

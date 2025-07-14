@@ -1,0 +1,86 @@
+# Archivos temporales
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+*.cache
+
+# Backups
+*.backup
+*.bak
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Configuración local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos de configuración específicos del usuario
+user-config.yaml
+local-config.yaml
+personal-settings.yaml
+
+# Archivos generados por herramientas
+.tool-output/
+.generated/
+
+# Archivos de IDE/Editor
+.vscode/settings.json
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de desarrollo
+node_modules/
+.npm/
+.yarn/
+vendor/
+target/
+build/
+dist/
+
+# Archivos de testing
+coverage/
+.nyc_output/
+test-results/
+
+# Archivos de documentación generados
+docs/generated/
+api-docs/
+
+# Archivos de monitoreo
+.monitor/
+metrics/
+
+# Archivos de deployment
+deploy/
+.deploy/
+
+# Archivos de configuración sensible
+secrets.yaml
+private-keys/
+certificates/
+
+# Archivos de base de datos local
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de backup automático
+*.orig
+*.rej
