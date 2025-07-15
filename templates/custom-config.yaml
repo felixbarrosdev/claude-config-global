@@ -1,6 +1,24 @@
 # Custom Configuration for [[PROJECT_NAME]]
 # Configuración personalizada que complementa la configuración base
 
+# 🔐 IMPORTANTE - SEGURIDAD DE SECRETOS:
+# NUNCA hardcodees secretos, API keys, contraseñas o tokens en este archivo.
+# Siempre usa variables de entorno con el formato ${VARIABLE_NAME}.
+# Para más información, consulta: context/security-basics.md
+# 
+# ✅ Correcto: api_key: "${API_KEY}"
+# ❌ Incorrecto: api_key: "sk-1234567890abcdef"
+#
+# Variables de entorno requeridas para este proyecto:
+# - DATABASE_URL: URL de conexión a la base de datos
+# - JWT_SECRET: Secreto para firmar tokens JWT (mínimo 32 caracteres)
+# - API_KEY: Clave de API para servicios externos
+# - SLACK_WEBHOOK_URL: URL del webhook de Slack para notificaciones
+# - SENTRY_DSN: DSN de Sentry para tracking de errores
+# - NEW_RELIC_LICENSE_KEY: Licencia de New Relic para monitoreo
+# - REDIS_HOST: Host del servidor Redis
+# - CDN_ZONE_ID: ID de zona del CDN (Cloudflare)
+
 # Información del proyecto
 project:
   name: "[[PROJECT_NAME]]"
@@ -275,6 +293,9 @@ integrations:
     # Integración con Slack
     slack:
       enabled: true
+      # ⚠️ SEGURIDAD: NUNCA escribas el webhook aquí directamente.
+      # Usa una variable de entorno y cárgala en tu aplicación.
+      # Consulta context/security-basics.md para más detalles.
       webhook_url: "${SLACK_WEBHOOK_URL}"
       channel: "#development"
       
@@ -289,12 +310,16 @@ integrations:
     # Sentry para error tracking
     sentry:
       enabled: true
+      # ⚠️ SEGURIDAD: DSN contiene información sensible del proyecto.
+      # Usa variables de entorno para manejarlo de forma segura.
       dsn: "${SENTRY_DSN}"
       environment: "${NODE_ENV}"
       
     # New Relic para APM
     newrelic:
       enabled: true
+      # ⚠️ SEGURIDAD: La license key es un secreto crítico.
+      # NUNCA la hardcodees aquí. Usa variables de entorno.
       license_key: "${NEW_RELIC_LICENSE_KEY}"
       app_name: "[[PROJECT_NAME]]"
 
@@ -319,6 +344,7 @@ environments:
   # Configuración para staging
   staging:
     database:
+      # ⚠️ SEGURIDAD: Credenciales de BD siempre como variables de entorno
       host: "${STAGING_DB_HOST}"
       port: 5432
       name: "[[PROJECT_NAME]]_staging"
@@ -335,6 +361,7 @@ environments:
   # Configuración para producción
   production:
     database:
+      # ⚠️ SEGURIDAD: Credenciales de producción requieren máxima protección
       host: "${PROD_DB_HOST}"
       port: 5432
       name: "[[PROJECT_NAME]]_prod"
@@ -413,6 +440,7 @@ notifications:
       
     slack:
       enabled: true
+      # ⚠️ SEGURIDAD: Webhook URL es información sensible
       webhook: "${SLACK_WEBHOOK_URL}"
       channel: "#alerts"
       
@@ -511,17 +539,23 @@ database:
 
 # Variables de entorno específicas
 environment_variables:
-  # Variables requeridas
+  # 🔐 GESTIÓN SEGURA DE SECRETOS
+  # Todas las variables marcadas como "required" contienen información sensible
+  # que NUNCA debe hardcodearse en el código o archivos de configuración.
+  
+  # Variables requeridas (CRÍTICAS - contienen secretos)
   required:
-    - "DATABASE_URL"
-    - "JWT_SECRET"
-    - "API_KEY"
+    - "DATABASE_URL"        # Credenciales completas de base de datos
+    - "JWT_SECRET"          # Secreto para firmar tokens (mín. 32 chars)
+    - "API_KEY"             # Clave de API para servicios externos
     
-  # Variables opcionales
+  # Variables opcionales (pueden contener secretos)
   optional:
-    - "REDIS_URL"
-    - "SENTRY_DSN"
-    - "NEW_RELIC_LICENSE_KEY"
+    - "REDIS_URL"           # URL con credenciales de Redis
+    - "SENTRY_DSN"          # DSN con información del proyecto
+    - "NEW_RELIC_LICENSE_KEY"  # Licencia de New Relic
+    - "SLACK_WEBHOOK_URL"   # URL del webhook de Slack
+    - "CDN_ZONE_ID"         # ID de zona del CDN
     
   # Variables por ambiente
   development:
@@ -568,6 +602,7 @@ cache:
   # Configuración de Redis
   redis:
     enabled: true
+    # ⚠️ SEGURIDAD: Credenciales de Redis como variables de entorno
     host: "${REDIS_HOST}"
     port: 6379
     ttl: 3600
@@ -582,6 +617,7 @@ cache:
   cdn:
     enabled: false
     provider: "cloudflare"
+    # ⚠️ SEGURIDAD: Zone ID es información sensible del CDN
     zone_id: "${CDN_ZONE_ID}"
 
 # Configuración de deployment personalizada

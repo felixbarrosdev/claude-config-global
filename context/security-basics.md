@@ -354,6 +354,310 @@ async function getSecret(secretName) {
 }
 ```
 
+### Prácticas Recomendadas para la Gestión de Secretos
+
+La gestión inadecuada de secretos es una de las principales causas de violaciones de seguridad. Los secretos incluyen API keys, tokens de acceso, contraseñas de bases de datos, certificados y cualquier información sensible que permita acceso a sistemas.
+
+#### 🔐 Variables de Entorno
+La estrategia más común y recomendada para manejar secretos es utilizar variables de entorno:
+
+```javascript
+// ✅ Correcto: Usar variables de entorno
+const config = {
+  databaseUrl: process.env.DATABASE_URL,
+  apiKey: process.env.API_KEY,
+  jwtSecret: process.env.JWT_SECRET,
+  slackWebhook: process.env.SLACK_WEBHOOK_URL
+};
+
+// ❌ Incorrecto: Hardcodear secretos
+const config = {
+  databaseUrl: "postgresql://user:password@host:5432/db",
+  apiKey: "sk-1234567890abcdef",
+  jwtSecret: "supersecretkey123",
+  slackWebhook: "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+};
+
+// ✅ Validación de variables requeridas
+function validateEnvironment() {
+  const requiredVars = ['DATABASE_URL', 'API_KEY', 'JWT_SECRET'];
+  
+  for (const varName of requiredVars) {
+    if (!process.env[varName]) {
+      throw new Error(`Required environment variable ${varName} is not set`);
+    }
+  }
+}
+```
+
+#### 📁 Archivos .env para Desarrollo Local
+Para desarrollo local, usar archivos `.env` es una práctica aceptada, **SIEMPRE** que nunca se suban a Git:
+
+```bash
+# .env - Solo para desarrollo local
+DATABASE_URL=postgresql://localhost:5432/myapp_dev
+API_KEY=dev-api-key-12345
+JWT_SECRET=development-jwt-secret-never-use-in-production
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/DEV/WEBHOOK/URL
+
+# Configuración específica del entorno
+NODE_ENV=development
+DEBUG=true
+```
+
+```javascript
+// Cargar variables de entorno en desarrollo
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
+// Verificar que estamos usando secretos seguros en producción
+if (process.env.NODE_ENV === 'production') {
+  if (process.env.JWT_SECRET?.includes('development') || 
+      process.env.JWT_SECRET?.length < 32) {
+    throw new Error('Production JWT_SECRET is not secure enough');
+  }
+}
+```
+
+**⚠️ IMPORTANTE**: El `.gitignore` del proyecto ya protege automáticamente los archivos `.env`:
+```gitignore
+# Variables de entorno
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+```
+
+#### 🔄 Plataformas de CI/CD
+Los sistemas de CI/CD modernos proporcionan mecanismos seguros para manejar secretos:
+
+```yaml
+# GitHub Actions
+name: Deploy
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to production
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          npm install
+          npm run deploy
+```
+
+```yaml
+# GitLab CI
+deploy:
+  stage: deploy
+  variables:
+    DATABASE_URL: $CI_DATABASE_URL
+    API_KEY: $CI_API_KEY
+    JWT_SECRET: $CI_JWT_SECRET
+  script:
+    - npm install
+    - npm run deploy
+```
+
+```javascript
+// Azure DevOps
+// Variables configuradas en la pipeline UI y accedidas como:
+const config = {
+  databaseUrl: process.env.DATABASE_URL,
+  apiKey: process.env.API_KEY
+};
+```
+
+#### 🏛️ Sistemas Dedicados de Gestión de Secretos
+Para aplicaciones en producción, se recomiendan sistemas especializados:
+
+```javascript
+// AWS Secrets Manager
+const AWS = require('aws-sdk');
+const secretsManager = new AWS.SecretsManager();
+
+class SecretsManager {
+  static async getSecret(secretName) {
+    try {
+      const result = await secretsManager.getSecretValue({
+        SecretId: secretName
+      }).promise();
+      
+      return JSON.parse(result.SecretString);
+    } catch (error) {
+      console.error(`Error retrieving secret ${secretName}:`, error.message);
+      throw new Error(`Failed to retrieve secret: ${secretName}`);
+    }
+  }
+  
+  static async getDatabaseConfig() {
+    const secrets = await this.getSecret('prod/database');
+    return {
+      host: secrets.host,
+      username: secrets.username,
+      password: secrets.password,
+      database: secrets.database
+    };
+  }
+}
+
+// HashiCorp Vault
+const vault = require('node-vault')({
+  endpoint: process.env.VAULT_ENDPOINT,
+  token: process.env.VAULT_TOKEN
+});
+
+async function getVaultSecret(path) {
+  try {
+    const result = await vault.read(path);
+    return result.data;
+  } catch (error) {
+    console.error('Vault error:', error.message);
+    throw new Error(`Failed to retrieve secret from path: ${path}`);
+  }
+}
+
+// Azure Key Vault
+const { SecretClient } = require('@azure/keyvault-secrets');
+const { DefaultAzureCredential } = require('@azure/identity');
+
+const credential = new DefaultAzureCredential();
+const vaultUrl = process.env.KEY_VAULT_URL;
+const client = new SecretClient(vaultUrl, credential);
+
+async function getAzureSecret(secretName) {
+  try {
+    const secret = await client.getSecret(secretName);
+    return secret.value;
+  } catch (error) {
+    console.error('Azure Key Vault error:', error.message);
+    throw new Error(`Failed to retrieve secret: ${secretName}`);
+  }
+}
+```
+
+#### 🔄 Rotación de Secretos
+Implementar rotación regular de secretos:
+
+```javascript
+class SecretRotation {
+  constructor(secretsManager) {
+    this.secretsManager = secretsManager;
+    this.rotationSchedule = new Map();
+  }
+  
+  async rotateSecret(secretName, generator) {
+    try {
+      // Generar nuevo secreto
+      const newSecret = await generator();
+      
+      // Actualizar en el sistema de gestión
+      await this.secretsManager.updateSecret(secretName, newSecret);
+      
+      // Notificar a servicios dependientes
+      await this.notifyDependentServices(secretName);
+      
+      // Log del evento de rotación
+      console.log(`Secret ${secretName} rotated successfully`);
+      
+      return newSecret;
+    } catch (error) {
+      console.error(`Failed to rotate secret ${secretName}:`, error.message);
+      throw error;
+    }
+  }
+  
+  async scheduleRotation(secretName, intervalDays = 90) {
+    const interval = intervalDays * 24 * 60 * 60 * 1000;
+    
+    setInterval(async () => {
+      await this.rotateSecret(secretName, this.generateApiKey);
+    }, interval);
+  }
+  
+  generateApiKey() {
+    const crypto = require('crypto');
+    return crypto.randomBytes(32).toString('hex');
+  }
+}
+```
+
+#### 📋 Checklist de Seguridad para Secretos
+
+```
+✅ Gestión de Secretos - Checklist:
+□ Nunca hardcodear secretos en el código
+□ Usar variables de entorno para secretos
+□ Archivos .env excluidos del control de versiones
+□ Secretos de producción diferentes a desarrollo
+□ Validación de secretos requeridos al inicio
+□ Acceso restringido a secretos de producción
+□ Rotación regular de secretos críticos
+□ Auditoría de acceso a secretos
+□ Encriptación de secretos en reposo
+□ Logs no exponen secretos
+□ Secretos no aparecen en URLs o logs
+□ Backup seguro de secretos críticos
+```
+
+#### 🚨 Qué Hacer si un Secreto se Compromete
+
+```javascript
+// Plan de respuesta a compromiso de secretos
+class SecretIncidentResponse {
+  static async handleCompromisedSecret(secretName, compromiseDetails) {
+    console.log(`🚨 INCIDENT: Secret ${secretName} may be compromised`);
+    
+    // 1. Revocar inmediatamente el secreto
+    await this.revokeSecret(secretName);
+    
+    // 2. Generar nuevo secreto
+    const newSecret = await this.generateNewSecret(secretName);
+    
+    // 3. Actualizar sistemas dependientes
+    await this.updateDependentSystems(secretName, newSecret);
+    
+    // 4. Investigar el alcance del compromiso
+    await this.investigateCompromise(compromiseDetails);
+    
+    // 5. Notificar al equipo de seguridad
+    await this.notifySecurityTeam({
+      incident: 'secret_compromise',
+      secretName,
+      timestamp: new Date(),
+      details: compromiseDetails
+    });
+    
+    // 6. Documentar el incidente
+    await this.documentIncident(secretName, compromiseDetails);
+  }
+  
+  static async auditSecretAccess(timeRange = '24h') {
+    // Revisar logs de acceso a secretos
+    const accessLogs = await this.getSecretAccessLogs(timeRange);
+    
+    // Detectar patrones sospechosos
+    const suspiciousActivity = this.detectSuspiciousPatterns(accessLogs);
+    
+    if (suspiciousActivity.length > 0) {
+      await this.alertSecurityTeam(suspiciousActivity);
+    }
+    
+    return {
+      totalAccess: accessLogs.length,
+      suspiciousActivity: suspiciousActivity.length,
+      summary: this.generateAuditSummary(accessLogs)
+    };
+  }
+}
+```
+
 ### 3. Dependency Security
 ```javascript
 // Audit regular de dependencias
