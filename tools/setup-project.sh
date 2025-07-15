@@ -234,21 +234,28 @@ This project uses Claude Config Global for standardized development practices.
 - **Type**: $PROJECT_TYPE
 - **Author**: $AUTHOR_NAME
 - **Repository**: $GIT_REMOTE
+- **Installation Mode**: ${INSTALLATION_MODE:-full}
 
 ## Configuration
-- **Main Config**: .claude/config.yaml
+- **Main Config**: .claude/config.yaml$([ "$INSTALLATION_MODE" = "full" ] && echo "
 - **Project Context**: .claude/project-context.md
 - **Team Standards**: .claude/team-standards.md
-- **Custom Config**: .claude/custom-config.yaml
+- **Custom Config**: .claude/custom-config.yaml" || echo "
+- **Essential Context**: .claude/context/code-quality.md, .claude/context/security-basics.md
+- **Essential Prompt**: .claude/prompts/code-review.md")
 
 ## Available Commands
 - **Setup**: \`./claude/tools/setup-project.sh\`
 - **Update**: \`./claude/tools/update-config.sh\`
-- **Detect**: \`./claude/tools/detect-project.sh\`
+- **Detect**: \`./claude/tools/detect-project.sh\`$([ "$INSTALLATION_MODE" = "lite" ] && echo "
+- **Upgrade to Full**: \`./claude/tools/upgrade-to-full.sh\`")
 
 ## Usage
 Claude Code will automatically load configurations from the .claude directory.
-For project-specific customizations, edit the files in .claude/templates/.
+For project-specific customizations, edit the files in .claude/templates/.$([ "$INSTALLATION_MODE" = "lite" ] && echo "
+
+**Note**: This is a Lite installation. To access all prompts, contexts, and workflows, run:
+\`./claude/tools/upgrade-to-full.sh\`")
 
 ## Version
 Claude Config Global version: $(cat "$VERSION_FILE" 2>/dev/null || echo "Unknown")
@@ -422,17 +429,35 @@ show_next_steps() {
     echo "╚═══════════════════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
     
-    echo -e "${BLUE}Next Steps:${NC}"
-    echo "1. Review and customize .claude/project-context.md"
-    echo "2. Update .claude/team-standards.md with your team's standards"
-    echo "3. Modify .claude/custom-config.yaml for project-specific settings"
-    echo "4. Commit the Claude configuration to your repository"
-    echo "5. Share the setup with your team"
-    echo ""
-    echo -e "${BLUE}Available Commands:${NC}"
-    echo "- Update config: ${YELLOW}./.claude/tools/update-config.sh${NC}"
-    echo "- Detect project: ${YELLOW}./.claude/tools/detect-project.sh${NC}"
-    echo "- View help: ${YELLOW}cat .claude/README.md${NC}"
+    if [ "$INSTALLATION_MODE" = "lite" ]; then
+        echo -e "${BLUE}Lite Installation Complete!${NC}"
+        echo -e "${YELLOW}You have installed the essential Claude Config Global components.${NC}"
+        echo ""
+        echo -e "${BLUE}Next Steps:${NC}"
+        echo "1. Start using Claude Code with the essential configuration"
+        echo "2. When ready for more features, run: ${YELLOW}./.claude/tools/upgrade-to-full.sh${NC}"
+        echo "3. Commit the Claude configuration to your repository"
+        echo "4. Share the setup with your team"
+        echo ""
+        echo -e "${BLUE}Available Commands:${NC}"
+        echo "- Upgrade to Full: ${YELLOW}./.claude/tools/upgrade-to-full.sh${NC}"
+        echo "- Update config: ${YELLOW}./.claude/tools/update-config.sh${NC}"
+        echo "- Detect project: ${YELLOW}./.claude/tools/detect-project.sh${NC}"
+        echo "- View help: ${YELLOW}cat .claude/README.md${NC}"
+    else
+        echo -e "${BLUE}Next Steps:${NC}"
+        echo "1. Review and customize .claude/project-context.md"
+        echo "2. Update .claude/team-standards.md with your team's standards"
+        echo "3. Modify .claude/custom-config.yaml for project-specific settings"
+        echo "4. Commit the Claude configuration to your repository"
+        echo "5. Share the setup with your team"
+        echo ""
+        echo -e "${BLUE}Available Commands:${NC}"
+        echo "- Update config: ${YELLOW}./.claude/tools/update-config.sh${NC}"
+        echo "- Detect project: ${YELLOW}./.claude/tools/detect-project.sh${NC}"
+        echo "- View help: ${YELLOW}cat .claude/README.md${NC}"
+    fi
+    
     echo ""
     echo -e "${BLUE}Claude Code Integration:${NC}"
     echo "Claude Code will automatically load configurations from .claude/"
@@ -441,21 +466,115 @@ show_next_steps() {
     echo -e "${GREEN}Happy coding with Claude Config Global! 🚀${NC}"
 }
 
+# Installation mode selection
+select_installation_mode() {
+    log_info "Selecting installation mode..."
+    echo ""
+    echo -e "${BLUE}Please choose your installation mode:${NC}"
+    echo ""
+    echo -e "${GREEN}1. Full Installation${NC} (Recommended for teams and established projects)"
+    echo -e "   → All prompts, contexts, workflows, and templates"
+    echo -e "   → Complete Claude Config Global experience"
+    echo ""
+    echo -e "${YELLOW}2. Lite Installation${NC} (Ideal for getting started or small projects)"
+    echo -e "   → Essential configurations and core tools"
+    echo -e "   → Can be upgraded to Full later with upgrade-to-full.sh"
+    echo ""
+    
+    while true; do
+        read -p "Choose your installation mode [1-2]: " choice
+        case $choice in
+            1|"full"|"Full"|"FULL")
+                INSTALLATION_MODE="full"
+                log_success "Selected Full Installation"
+                break
+                ;;
+            2|"lite"|"Lite"|"LITE")
+                INSTALLATION_MODE="lite"
+                log_success "Selected Lite Installation"
+                break
+                ;;
+            *)
+                echo -e "${RED}Invalid choice. Please enter 1 for Full or 2 for Lite.${NC}"
+                ;;
+        esac
+    done
+    
+    export INSTALLATION_MODE
+}
+
+# Lite installation setup
+setup_lite_installation() {
+    log_info "Setting up Lite installation..."
+    
+    # Create essential directories
+    mkdir -p "$CLAUDE_DIR"
+    
+    # Copy essential files for Lite installation
+    # Core configuration
+    if [ -f "$CONFIG_FILE" ]; then
+        log_success "Main configuration already exists"
+    else
+        log_error "config.yaml not found"
+        exit 1
+    fi
+    
+    # Essential context files
+    if [ -f "$CLAUDE_DIR/context/code-quality.md" ]; then
+        log_success "Code quality context available"
+    fi
+    
+    if [ -f "$CLAUDE_DIR/context/security-basics.md" ]; then
+        log_success "Security basics context available"
+    fi
+    
+    # Essential prompt
+    if [ -f "$CLAUDE_DIR/prompts/code-review.md" ]; then
+        log_success "Code review prompt available"
+    fi
+    
+    # All tools and templates remain available
+    log_success "Tools and templates directory available"
+    
+    log_success "Lite installation setup completed"
+}
+
+# Full installation setup (existing behavior)
+setup_full_installation() {
+    log_info "Setting up Full installation..."
+    
+    # Run all the original setup steps
+    setup_project_context
+    setup_team_standards
+    setup_custom_config
+    setup_project_specific_tools
+    
+    log_success "Full installation setup completed"
+}
+
 # Main execution
 main() {
     print_header
     
-    # Run setup steps
+    # Run common setup steps
     check_prerequisites
     detect_project_type
     get_project_info
     backup_existing_config
-    setup_project_context
-    setup_team_standards
-    setup_custom_config
+    
+    # Select installation mode
+    select_installation_mode
+    
+    # Run mode-specific setup
+    if [ "$INSTALLATION_MODE" = "lite" ]; then
+        setup_lite_installation
+    else
+        setup_full_installation
+    fi
+    
+    # Run common final steps
     create_claude_md
     setup_gitignore
-    setup_project_specific_tools
     
     # Verify and show results
     if verify_installation; then

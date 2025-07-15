@@ -1,0 +1,251 @@
+name: Claude Config Global - Meta Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '.claude/prompts/**'
+      - '.claude/context/**'
+      - '.claude/workflows/**'
+      - '.claude/meta-testing/**'
+      - '.claude/tools/run-meta-tests.sh'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '.claude/prompts/**'
+      - '.claude/context/**'
+      - '.claude/workflows/**'
+      - '.claude/meta-testing/**'
+      - '.claude/tools/run-meta-tests.sh'
+  workflow_dispatch:
+    inputs:
+      scenario_name:
+        description: 'Specific scenario to test (leave empty for all)'
+        required: false
+        type: string
+      similarity_threshold:
+        description: 'Similarity threshold (0.0-1.0)'
+        required: false
+        default: '0.7'
+        type: string
+      verbose:
+        description: 'Enable verbose output'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  meta-testing:
+    name: Run Meta Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+      fail-fast: false
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for better context
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq curl
+    
+    - name: Verify Claude Config Global structure
+      run: |
+        echo "Verifying .claude directory structure..."
+        ls -la .claude/
+        
+        if [ ! -f ".claude/tools/run-meta-tests.sh" ]; then
+          echo "❌ Meta-testing script not found"
+          exit 1
+        fi
+        
+        if [ ! -d ".claude/meta-testing/scenarios" ]; then
+          echo "❌ Meta-testing scenarios directory not found"
+          exit 1
+        fi
+        
+        echo "✅ Claude Config Global structure verified"
+    
+    - name: Make scripts executable
+      run: |
+        chmod +x .claude/tools/*.sh
+        echo "✅ Scripts made executable"
+    
+    - name: List available test scenarios
+      run: |
+        echo "📋 Available test scenarios:"
+        .claude/tools/run-meta-tests.sh --list
+    
+    - name: Run meta tests (all scenarios)
+      if: ${{ github.event.inputs.scenario_name == '' }}
+      run: |
+        echo "🧪 Running all meta tests..."
+        
+        # Set up parameters
+        THRESHOLD="${{ github.event.inputs.similarity_threshold || '0.7' }}"
+        VERBOSE_FLAG=""
+        
+        if [ "${{ github.event.inputs.verbose }}" = "true" ]; then
+          VERBOSE_FLAG="--verbose"
+        fi
+        
+        # Run tests
+        .claude/tools/run-meta-tests.sh \
+          --threshold "$THRESHOLD" \
+          $VERBOSE_FLAG
+    
+    - name: Run meta tests (specific scenario)
+      if: ${{ github.event.inputs.scenario_name != '' }}
+      run: |
+        echo "🧪 Running specific scenario: ${{ github.event.inputs.scenario_name }}"
+        
+        # Set up parameters
+        THRESHOLD="${{ github.event.inputs.similarity_threshold || '0.7' }}"
+        VERBOSE_FLAG=""
+        
+        if [ "${{ github.event.inputs.verbose }}" = "true" ]; then
+          VERBOSE_FLAG="--verbose"
+        fi
+        
+        # Run specific test
+        .claude/tools/run-meta-tests.sh \
+          --threshold "$THRESHOLD" \
+          $VERBOSE_FLAG \
+          "${{ github.event.inputs.scenario_name }}"
+    
+    - name: Generate test report
+      if: always()
+      run: |
+        echo "📊 Generating test report..."
+        
+        # Create a detailed report
+        cat > meta-test-report.md << 'EOF'
+        # Claude Config Global Meta-Testing Report
+        
+        **Workflow**: ${{ github.workflow }}  
+        **Run ID**: ${{ github.run_id }}  
+        **Python Version**: ${{ matrix.python-version }}  
+        **Branch**: ${{ github.ref_name }}  
+        **Commit**: ${{ github.sha }}  
+        **Triggered by**: ${{ github.event_name }}
+        
+        ## Test Configuration
+        
+        - **Similarity Threshold**: ${{ github.event.inputs.similarity_threshold || '0.7' }}
+        - **Verbose Mode**: ${{ github.event.inputs.verbose || 'false' }}
+        - **Specific Scenario**: ${{ github.event.inputs.scenario_name || 'All scenarios' }}
+        
+        ## Available Scenarios
+        
+        EOF
+        
+        # Add scenarios list to report
+        echo "Scenarios found:" >> meta-test-report.md
+        .claude/tools/run-meta-tests.sh --list >> meta-test-report.md 2>&1 || true
+        
+        echo "✅ Test report generated"
+    
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: meta-test-results-python-${{ matrix.python-version }}
+        path: |
+          meta-test-report.md
+          /tmp/claude-meta-tests-*/
+        retention-days: 30
+    
+    - name: Comment on PR (if applicable)
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          
+          // Read the test report if it exists
+          let reportContent = "Meta-testing completed.";
+          try {
+            reportContent = fs.readFileSync('meta-test-report.md', 'utf8');
+          } catch (error) {
+            console.log('No report file found, using default message');
+          }
+          
+          // Create comment body
+          const commentBody = `
+          ## 🧪 Claude Config Global Meta-Testing Results
+          
+          **Python Version**: ${{ matrix.python-version }}
+          **Status**: ${{ job.status }}
+          
+          <details>
+          <summary>📊 Detailed Report</summary>
+          
+          \`\`\`
+          ${reportContent}
+          \`\`\`
+          
+          </details>
+          
+          > This comment was automatically generated by the meta-testing workflow.
+          `;
+          
+          // Post comment
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: commentBody
+          });
+
+  notify-results:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: meta-testing
+    if: always()
+    
+    steps:
+    - name: Check test results
+      run: |
+        echo "Meta-testing workflow completed."
+        echo "Meta-testing job status: ${{ needs.meta-testing.result }}"
+        
+        if [ "${{ needs.meta-testing.result }}" = "success" ]; then
+          echo "✅ All meta tests passed successfully!"
+        elif [ "${{ needs.meta-testing.result }}" = "failure" ]; then
+          echo "❌ Some meta tests failed. Please review the logs."
+          exit 1
+        else
+          echo "⚠️ Meta-testing completed with status: ${{ needs.meta-testing.result }}"
+        fi
+    
+    - name: Create summary
+      run: |
+        echo "## 🧪 Claude Config Global Meta-Testing Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Workflow Status**: ${{ needs.meta-testing.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ needs.meta-testing.result }}" = "success" ]; then
+          echo "✅ **Result**: All meta tests passed! The prompt quality meets the expected standards." >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Result**: Some meta tests failed. Please review the detailed logs and update prompts as needed." >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+        echo "- Review the test artifacts for detailed results" >> $GITHUB_STEP_SUMMARY
+        echo "- Update golden masters if intentional changes were made" >> $GITHUB_STEP_SUMMARY
+        echo "- Fix prompt issues if tests are failing unexpectedly" >> $GITHUB_STEP_SUMMARY
