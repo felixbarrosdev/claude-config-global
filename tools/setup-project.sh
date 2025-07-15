@@ -66,6 +66,24 @@ check_prerequisites() {
         exit 1
     fi
     
+    # Check for jq dependency (used for JSON processing)
+    if ! command -v jq > /dev/null 2>&1; then
+        log_warning "jq is not installed. Some features may be limited."
+        log_warning "To install jq:"
+        echo ""
+        echo "  # On Ubuntu/Debian:"
+        echo "  sudo apt-get install jq"
+        echo ""
+        echo "  # On macOS with Homebrew:"
+        echo "  brew install jq"
+        echo ""
+        echo "  # On CentOS/RHEL:"
+        echo "  sudo yum install jq"
+        echo ""
+        echo "Setup will continue, but package.json processing may be limited."
+        echo ""
+    fi
+    
     log_success "Prerequisites check passed"
 }
 

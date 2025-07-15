@@ -65,6 +65,36 @@ check_prerequisites() {
         exit 1
     fi
     
+    # Check for Python3 and PyYAML dependency
+    if ! command -v python3 > /dev/null 2>&1; then
+        log_error "python3 is required but not installed"
+        log_error "Please install Python 3 and try again"
+        exit 1
+    fi
+    
+    # Explicit PyYAML verification
+    if ! python3 -c "import yaml" 2>/dev/null; then
+        log_error "PyYAML is required but not installed"
+        log_error "Please install PyYAML using one of the following commands:"
+        echo ""
+        echo "  # Using pip:"
+        echo "  pip install PyYAML"
+        echo ""
+        echo "  # Using pip3:"
+        echo "  pip3 install PyYAML"
+        echo ""
+        echo "  # Using conda:"
+        echo "  conda install pyyaml"
+        echo ""
+        echo "  # On Ubuntu/Debian:"
+        echo "  sudo apt-get install python3-yaml"
+        echo ""
+        echo "  # On macOS with Homebrew:"
+        echo "  brew install libyaml && pip3 install PyYAML"
+        echo ""
+        exit 1
+    fi
+    
     log_success "Prerequisites check passed"
 }
 
@@ -309,10 +339,8 @@ validate_configuration() {
     if [ ! -f "$CONFIG_FILE" ]; then
         log_error "Main config file missing: $CONFIG_FILE"
         errors=$((errors + 1))
-    fi
-    
-    # Check if config is valid YAML
-    if command -v python3 > /dev/null 2>&1; then
+    else
+        # Check if config is valid YAML (PyYAML already verified in prerequisites)
         if ! python3 -c "import yaml; yaml.safe_load(open('$CONFIG_FILE'))" 2>/dev/null; then
             log_error "Invalid YAML syntax in $CONFIG_FILE"
             errors=$((errors + 1))
