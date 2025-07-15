@@ -1,0 +1,231 @@
+name: ✨ Nuevo Prompt
+description: Proponer un nuevo prompt para Claude Config Global
+title: "[PROMPT] "
+labels: ["new-prompt", "enhancement", "needs-meta-testing"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Excelente! Los nuevos prompts son una de las contribuciones más valiosas. 
+        
+        **⚠️ Importante**: Todos los prompts nuevos DEBEN incluir meta-testing correspondiente.
+
+  - type: input
+    id: prompt-name
+    attributes:
+      label: 📝 Nombre del Prompt
+      description: Nombre descriptivo para el archivo (ej. "docker-deployment", "api-testing")
+      placeholder: mi-nuevo-prompt
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 🎯 Categoría
+      description: Tipo de prompt que propones
+      options:
+        - Desarrollo/Programación
+        - Testing/QA
+        - DevOps/Deployment
+        - Arquitectura/Diseño
+        - Documentación
+        - Debugging/Troubleshooting
+        - Refactoring/Code Quality
+        - Seguridad
+        - Performance/Optimización
+        - Otro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: technology
+    attributes:
+      label: 🛠️ Tecnología Principal
+      description: Tecnología o lenguaje principal (si aplica)
+      options:
+        - JavaScript/Node.js
+        - Python
+        - Java
+        - Go
+        - Rust
+        - TypeScript
+        - React/Frontend
+        - Docker/Containers
+        - Kubernetes
+        - AWS/Cloud
+        - Bases de datos
+        - Agnóstico de tecnología
+        - Otro
+    validations:
+      required: false
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 🎯 Propósito y Objetivos
+      description: ¿Qué problema resuelve este prompt?
+      placeholder: |
+        Este prompt ayudaría a:
+        - Objetivo principal: [descripción]
+        - Casos de uso: [situaciones específicas]
+        - Beneficios: [qué mejora o automatiza]
+    validations:
+      required: true
+
+  - type: textarea
+    id: target-audience
+    attributes:
+      label: 👥 Audiencia Objetivo
+      description: ¿Quién usaría este prompt?
+      placeholder: |
+        Este prompt sería útil para:
+        - Desarrolladores que...
+        - Equipos que necesitan...
+        - Proyectos que requieren...
+    validations:
+      required: true
+
+  - type: textarea
+    id: input-examples
+    attributes:
+      label: 📥 Ejemplos de Input
+      description: Qué tipo de código o archivos se le proporcionarían al prompt
+      placeholder: |
+        Ejemplos de archivos/código que el prompt recibiría:
+        - Tipo de archivo 1: [descripción y ejemplo]
+        - Tipo de archivo 2: [descripción y ejemplo]
+        - Contexto adicional: [logs, configuraciones, etc.]
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-output
+    attributes:
+      label: 📤 Output Esperado
+      description: Qué tipo de respuesta debería generar Claude
+      placeholder: |
+        El prompt debería generar:
+        - Análisis de: [qué aspectos analizar]
+        - Recomendaciones sobre: [qué sugerir]
+        - Código/ejemplos de: [qué mostrar]
+        - Formato: [cómo estructurar la respuesta]
+    validations:
+      required: true
+
+  - type: textarea
+    id: meta-testing-plan
+    attributes:
+      label: 🧪 Plan de Meta-Testing
+      description: Cómo probarías la calidad de este prompt (REQUERIDO)
+      placeholder: |
+        Para el meta-testing necesitaríamos:
+        
+        **Escenario de prueba**: nombre-del-escenario
+        
+        **Input files**:
+        - archivo1.ext: [descripción del contenido]
+        - archivo2.ext: [descripción del contenido]
+        
+        **Golden master**:
+        - Tipo de análisis esperado
+        - Estructura de la respuesta ideal
+        - Métricas de calidad específicas
+        
+        **Casos edge**:
+        - Caso problemático 1: [descripción]
+        - Caso problemático 2: [descripción]
+    validations:
+      required: true
+
+  - type: textarea
+    id: prompt-structure
+    attributes:
+      label: 📋 Estructura del Prompt (Borrador)
+      description: Borrador inicial del contenido del prompt (opcional pero útil)
+      placeholder: |
+        # Mi Nuevo Prompt
+        
+        Descripción del propósito...
+        
+        ## 🎯 Objetivos
+        - Objetivo 1
+        - Objetivo 2
+        
+        ## 🔄 Proceso
+        1. Paso 1
+        2. Paso 2
+        
+        ## 📋 Ejemplos
+        [ejemplos específicos]
+        
+        ## ✅ Criterios de Éxito
+        - Criterio medible 1
+        - Criterio medible 2
+
+  - type: textarea
+    id: similar-prompts
+    attributes:
+      label: 🔍 Prompts Similares
+      description: ¿Hay prompts existentes relacionados? ¿En qué se diferencia?
+      placeholder: |
+        Prompts relacionados existentes:
+        - prompt-existente.md: [en qué se diferencia]
+        - otro-prompt.md: [por qué este es necesario además]
+        
+        O: "No hay prompts similares existentes"
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: 🏗️ Complejidad del Prompt
+      description: ¿Qué tan complejo sería este prompt?
+      options:
+        - Simple - Prompt directo, respuesta estructurada
+        - Medio - Análisis moderado, múltiples secciones
+        - Complejo - Análisis profundo, múltiples consideraciones
+        - Muy complejo - Requiere expertise específico
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: implementation-commitment
+    attributes:
+      label: 🤝 Compromiso de Implementación
+      options:
+        - label: Estoy dispuesto/a a crear el prompt completo
+          required: false
+        - label: Estoy dispuesto/a a crear el escenario de meta-testing
+          required: false
+        - label: Puedo proporcionar casos de prueba realistas
+          required: false
+        - label: Solo estoy sugiriendo la idea para que otros la implementen
+          required: false
+
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: 📝 Notas Adicionales
+      description: Cualquier información adicional relevante
+      placeholder: |
+        Información adicional:
+        - Referencias útiles
+        - Herramientas relacionadas
+        - Consideraciones especiales
+        - Timeline esperado
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ Checklist
+      options:
+        - label: He revisado los prompts existentes para evitar duplicación
+          required: true
+        - label: He considerado cómo se probaría la calidad de este prompt
+          required: true
+        - label: He leído la guía de contribución sobre prompts
+          required: true
+        - label: Entiendo que necesito crear meta-testing para este prompt
+          required: true

@@ -1,0 +1,205 @@
+# GitHub Labels for Claude Config Global
+# Use with: gh label create --file .github/labels.yml
+
+# Priority Labels
+- name: "priority:critical"
+  color: "d73a4a"
+  description: "Critical issue that needs immediate attention"
+
+- name: "priority:high"
+  color: "ff6b6b"
+  description: "High priority issue"
+
+- name: "priority:medium"
+  color: "ffa726"
+  description: "Medium priority issue"
+
+- name: "priority:low"
+  color: "81c784"
+  description: "Low priority issue"
+
+# Type Labels
+- name: "bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "enhancement"
+  color: "a2eeef"
+  description: "New feature or request"
+
+- name: "documentation"
+  color: "0075ca"
+  description: "Improvements or additions to documentation"
+
+- name: "question"
+  color: "d876e3"
+  description: "Further information is requested"
+
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention is needed"
+
+# Component Labels
+- name: "prompts"
+  color: "f29513"
+  description: "Related to prompt files"
+
+- name: "meta-testing"
+  color: "0e8a16"
+  description: "Related to meta-testing framework"
+
+- name: "tools"
+  color: "5319e7"
+  description: "Related to tools/ directory scripts"
+
+- name: "context"
+  color: "c2e0c6"
+  description: "Related to context files"
+
+- name: "workflows"
+  color: "1d76db"
+  description: "Related to workflow files"
+
+- name: "templates"
+  color: "bfd4f2"
+  description: "Related to template files"
+
+# Technology Labels
+- name: "javascript"
+  color: "f1e05a"
+  description: "JavaScript related"
+
+- name: "python"
+  color: "3572a5"
+  description: "Python related"
+
+- name: "docker"
+  color: "2496ed"
+  description: "Docker related"
+
+- name: "nodejs"
+  color: "339933"
+  description: "Node.js related"
+
+- name: "devops"
+  color: "326ce5"
+  description: "DevOps related"
+
+# Specific Prompt Types
+- name: "new-prompt"
+  color: "ff9500"
+  description: "Request for a new prompt"
+
+- name: "prompt-improvement"
+  color: "ffcc00"
+  description: "Improvement to existing prompt"
+
+- name: "prompt-bug"
+  color: "ff3333"
+  description: "Bug in existing prompt"
+
+# Meta-Testing Specific
+- name: "needs-meta-testing"
+  color: "0e8a16"
+  description: "Requires meta-testing implementation"
+
+- name: "meta-testing-failure"
+  color: "d73a4a"
+  description: "Meta-testing is failing"
+
+- name: "golden-master-update"
+  color: "ffa500"
+  description: "Golden master needs updating"
+
+# Status Labels
+- name: "needs-triage"
+  color: "fbca04"
+  description: "Needs initial evaluation"
+
+- name: "needs-discussion"
+  color: "d4c5f9"
+  description: "Needs community discussion"
+
+- name: "in-progress"
+  color: "0052cc"
+  description: "Currently being worked on"
+
+- name: "blocked"
+  color: "b60205"
+  description: "Blocked by external dependency"
+
+- name: "ready-for-review"
+  color: "0e8a16"
+  description: "Ready for code review"
+
+- name: "needs-more-info"
+  color: "fbca04"
+  description: "More information needed from reporter"
+
+# Setup/Installation
+- name: "setup"
+  color: "c5def5"
+  description: "Related to project setup"
+
+- name: "installation"
+  color: "c5def5" 
+  description: "Related to installation process"
+
+- name: "lite-mode"
+  color: "bfd4f2"
+  description: "Related to lite installation mode"
+
+- name: "full-mode"
+  color: "0052cc"
+  description: "Related to full installation mode"
+
+# Quality Assurance
+- name: "quality-assurance"
+  color: "128a0c"
+  description: "Quality assurance related"
+
+- name: "testing"
+  color: "0e8a16"
+  description: "Testing related"
+
+- name: "performance"
+  color: "ff6b35"
+  description: "Performance related"
+
+- name: "security"
+  color: "b60205"
+  description: "Security related"
+
+# Community
+- name: "community"
+  color: "7f0799"
+  description: "Community feedback or request"
+
+- name: "translation"
+  color: "54473f"
+  description: "Translation to other languages"
+
+- name: "beginner-friendly"
+  color: "7057ff"
+  description: "Suitable for beginners"
+
+# Special Labels
+- name: "breaking-change"
+  color: "b60205"
+  description: "Introduces breaking changes"
+
+- name: "duplicate"
+  color: "cfd3d7"
+  description: "This issue or pull request already exists"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "This will not be worked on"
+
+- name: "invalid"
+  color: "e4e669"
+  description: "This doesn't seem right"

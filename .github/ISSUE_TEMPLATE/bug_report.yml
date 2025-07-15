@@ -1,0 +1,140 @@
+name: 🐛 Bug Report
+description: Reportar un problema o comportamiento inesperado
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar un bug! Por favor proporciona la siguiente información para ayudarnos a resolverlo rápidamente.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 🐛 Descripción del Bug
+      description: Descripción clara y concisa del problema
+      placeholder: Describe qué está mal...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 🔄 Pasos para Reproducir
+      description: Pasos específicos para reproducir el comportamiento
+      placeholder: |
+        1. Ejecutar './tools/setup-project.sh'
+        2. Hacer '...'
+        3. Ver error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: ✅ Comportamiento Esperado
+      description: Qué esperabas que pasara
+      placeholder: Describe el comportamiento esperado...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: ❌ Comportamiento Actual
+      description: Qué pasó en realidad
+      placeholder: Describe qué pasó realmente...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 🎯 Componente Afectado
+      description: Qué parte del proyecto está afectada
+      options:
+        - Setup/Instalación
+        - Prompts
+        - Meta-testing
+        - Tools/Herramientas
+        - Documentación
+        - Workflows
+        - Otro
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: 🖥️ Sistema Operativo
+      description: Ejemplo - macOS 13.0, Ubuntu 22.04, Windows 11
+      placeholder: macOS 13.0
+    validations:
+      required: true
+
+  - type: input
+    id: claude-version
+    attributes:
+      label: 🤖 Versión Claude Code
+      description: Ejecuta `claude --version` o verifica en la aplicación
+      placeholder: 1.2.0
+    validations:
+      required: false
+
+  - type: input
+    id: config-version
+    attributes:
+      label: 📦 Versión Claude Config Global
+      description: Ejecuta `cat .claude/VERSION`
+      placeholder: 2.0.0
+    validations:
+      required: false
+
+  - type: input
+    id: node-version
+    attributes:
+      label: 🟢 Versión Node.js
+      description: Ejecuta `node --version` (si es relevante)
+      placeholder: v18.17.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📋 Logs y Output
+      description: Incluye cualquier mensaje de error, output de comandos, etc.
+      placeholder: |
+        Pega aquí los logs relevantes...
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📎 Información Adicional
+      description: Screenshots, archivos de configuración, contexto adicional
+      placeholder: Cualquier información adicional que pueda ayudar...
+
+  - type: checkboxes
+    id: meta-testing
+    attributes:
+      label: 🧪 Meta-Testing
+      description: Si el bug está relacionado con prompts
+      options:
+        - label: He ejecutado `./tools/run-meta-tests.sh` para verificar el problema
+        - label: El bug se reproduce con meta-testing
+        - label: He identificado qué escenario específico falla
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ Checklist
+      options:
+        - label: He buscado en issues existentes para evitar duplicados
+          required: true
+        - label: He seguido las instrucciones del README.md
+          required: true
+        - label: He leído la guía de contribución (CONTRIBUTING.md)
+          required: false

@@ -1,0 +1,161 @@
+name: 💡 Feature Request
+description: Sugerir una nueva característica o mejora
+title: "[FEATURE] "
+labels: ["enhancement", "needs-discussion"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Gracias por sugerir una mejora! Tus ideas ayudan a hacer Claude Config Global aún mejor.
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: 🎯 Tipo de Característica
+      description: Qué tipo de mejora estás sugiriendo
+      options:
+        - Nuevo prompt
+        - Mejora de prompt existente
+        - Nueva herramienta (tools/)
+        - Nuevo contexto
+        - Mejora de meta-testing
+        - Documentación
+        - Workflow/Automatización
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🎯 Problema que Resuelve
+      description: ¿Qué problema o necesidad aborda esta característica?
+      placeholder: |
+        Describe el problema o la oportunidad de mejora...
+        - ¿Qué es difícil de hacer actualmente?
+        - ¿Qué proceso podría ser más eficiente?
+        - ¿Qué caso de uso no está cubierto?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 🛠️ Solución Propuesta
+      description: Describe tu solución en detalle
+      placeholder: |
+        Describe cómo resolvería esto...
+        - ¿Qué agregarías o cambiarías?
+        - ¿Cómo funcionaría?
+        - ¿Qué archivos se verían afectados?
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: 📋 Casos de Uso
+      description: Situaciones específicas donde esto sería útil
+      placeholder: |
+        Casos de uso específicos:
+        - Caso 1: Desarrollador trabajando con...
+        - Caso 2: Equipo que necesita...
+        - Caso 3: Proyecto que requiere...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 Alternativas Consideradas
+      description: ¿Qué otras soluciones consideraste?
+      placeholder: |
+        Otras opciones que consideré:
+        - Alternativa 1: [descripción y por qué no es ideal]
+        - Alternativa 2: [descripción y por qué no es ideal]
+        - Status quo: [por qué la situación actual no es suficiente]
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: 🔧 Detalles de Implementación
+      description: Ideas sobre cómo implementar esto (opcional pero útil)
+      placeholder: |
+        Ideas de implementación:
+        - Archivos que habría que crear/modificar
+        - Dependencias necesarias
+        - Consideraciones técnicas
+        - Impacto en meta-testing
+
+  - type: checkboxes
+    id: meta-testing-requirements
+    attributes:
+      label: 🧪 Requisitos de Meta-Testing
+      description: Para prompts nuevos o modificados (marca si aplica)
+      options:
+        - label: Esta característica requiere nuevos escenarios de meta-testing
+        - label: Estoy dispuesto/a a crear los escenarios de prueba necesarios
+        - label: He considerado cómo se probaría la calidad de esta característica
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: ⚡ Prioridad Sugerida
+      description: ¿Qué tan urgente consideras esta mejora?
+      options:
+        - Baja - Mejora nice-to-have
+        - Media - Mejoraría significativamente la experiencia
+        - Alta - Resuelve un problema importante
+        - Crítica - Bloquea casos de uso importantes
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: 🏗️ Complejidad Estimada
+      description: ¿Qué tan compleja crees que sería la implementación?
+      options:
+        - Baja - Cambio simple, pocas horas
+        - Media - Cambio moderado, algunos días
+        - Alta - Cambio significativo, semanas
+        - No estoy seguro/a
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: ✅ Criterios de Aceptación
+      description: ¿Cómo sabríamos que esta característica está completa?
+      placeholder: |
+        La característica estará completa cuando:
+        - [ ] Criterio 1: [específico y medible]
+        - [ ] Criterio 2: [específico y medible]
+        - [ ] Criterio 3: [específico y medible]
+        - [ ] Documentación actualizada
+        - [ ] Tests/meta-testing añadidos (si aplica)
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 Contribución
+      options:
+        - label: Estoy interesado/a en implementar esta característica yo mismo/a
+        - label: Puedo ayudar con testing y feedback
+        - label: Puedo ayudar con documentación
+        - label: Solo estoy sugiriendo la idea
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ Checklist
+      options:
+        - label: He buscado en issues existentes para evitar duplicados
+          required: true
+        - label: He leído la documentación existente
+          required: true
+        - label: He considerado el impacto en usuarios existentes
+          required: false

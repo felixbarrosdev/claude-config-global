@@ -188,11 +188,43 @@ git pull origin main
 
 ## 🤝 Contribución
 
-1. Fork el repositorio
-2. Crea tu rama: `git checkout -b feature/nueva-caracteristica`
-3. Commit cambios: `git commit -m 'Añade nueva característica'`
-4. Push a la rama: `git push origin feature/nueva-caracteristica`
-5. Crea Pull Request
+¡Las contribuciones son bienvenidas! Claude Config Global prospera gracias a la comunidad de desarrolladores.
+
+### 🚀 Inicio Rápido
+
+1. Lee nuestra [Guía de Contribución](CONTRIBUTING.md) completa
+2. Revisa el [Código de Conducta](CODE_OF_CONDUCT.md)
+3. Busca [issues marcados como "good first issue"](https://github.com/felixbarrosdev/claude-config-global/labels/good%20first%20issue)
+
+### 📋 Tipos de Contribución
+
+- **🐛 Reportar bugs** - Ayuda a mejorar la calidad
+- **✨ Nuevos prompts** - Expande la funcionalidad
+- **🧪 Meta-testing** - Asegura la calidad de prompts
+- **📚 Documentación** - Mejora la experiencia del usuario
+- **🌍 Traducciones** - Hace el proyecto más accesible
+
+### ⚡ Proceso Rápido
+
+```bash
+# 1. Fork y clona
+git clone https://github.com/TU-USUARIO/claude-config-global.git
+cd claude-config-global
+
+# 2. Crea una rama
+git checkout -b feature/mi-mejora
+
+# 3. Realiza cambios y tests
+./tools/run-meta-tests.sh
+
+# 4. Commit y push
+git commit -m "feat: añade nuevo prompt para Docker"
+git push origin feature/mi-mejora
+
+# 5. Crea Pull Request
+```
+
+**📖 Para detalles completos, consulta [CONTRIBUTING.md](CONTRIBUTING.md)**
 
 ## 📄 Licencia
 
