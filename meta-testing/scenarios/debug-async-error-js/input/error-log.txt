@@ -1,0 +1,38 @@
+Application Error Log - User Data Service
+========================================
+
+2024-01-15T10:30:15.123Z [INFO] Starting user data fetch for user: 123
+2024-01-15T10:30:15.124Z [INFO] Cache miss, fetching from API for user: 123
+2024-01-15T10:30:15.445Z [INFO] User data: undefined
+2024-01-15T10:30:15.446Z [INFO] Starting batch processing for users: 123,456,789
+2024-01-15T10:30:15.447Z [INFO] Cache miss, fetching from API for user: 123
+2024-01-15T10:30:15.768Z [INFO] Cache miss, fetching from API for user: 456
+2024-01-15T10:30:16.089Z [INFO] Cache miss, fetching from API for user: 789
+2024-01-15T10:30:16.090Z [INFO] Batch results: [
+  { id: '123', error: 'User not found', status: 'error' },
+  { id: '456', error: 'User not found', status: 'error' },
+  { id: '789', error: 'User not found', status: 'error' }
+]
+2024-01-15T10:30:16.091Z [INFO] Starting profile enrichment for 2 users
+2024-01-15T10:30:16.092Z [INFO] Cache miss, fetching from API for user: 123
+2024-01-15T10:30:16.413Z [INFO] Cache miss, fetching from API for user: 456
+2024-01-15T10:30:16.734Z [INFO] Enriched users: [
+  Promise { <pending> },
+  Promise { <pending> }
+]
+
+Additional Context:
+- API endpoint is responding with HTTP 200
+- Users with IDs 123, 456, 789 exist in the database
+- Redis connection is established successfully
+- No network connectivity issues reported
+- Cache is being set but reads always result in cache miss
+
+Network Trace:
+GET https://api.example.com/users/123 -> 200 OK
+Response Time: 321ms
+Response Headers: Content-Type: application/json
+Response Body: {"id":"123","name":"John Doe","email":"john@example.com","profile":{"age":30,"city":"NY"},"preferences":{"theme":"dark"},"lastLogin":"2024-01-14T08:00:00Z"}
+
+Expected Behavior: User data should be returned and cached properly
+Actual Behavior: getUserData returns undefined despite successful API responses
