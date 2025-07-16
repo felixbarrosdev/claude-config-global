@@ -182,12 +182,12 @@ setup_project_context() {
         cp "$TEMPLATES_DIR/project-context.md" "$CLAUDE_DIR/project-context.md"
         
         # Replace placeholders
-        sed -i.bak "s/\[\[PROJECT_NAME\]\]/$PROJECT_NAME/g" "$CLAUDE_DIR/project-context.md"
-        sed -i.bak "s/\[\[PROJECT_TYPE\]\]/$PROJECT_TYPE/g" "$CLAUDE_DIR/project-context.md"
-        sed -i.bak "s/\[\[AUTHOR_NAME\]\]/$AUTHOR_NAME/g" "$CLAUDE_DIR/project-context.md"
-        sed -i.bak "s/\[\[AUTHOR_EMAIL\]\]/$AUTHOR_EMAIL/g" "$CLAUDE_DIR/project-context.md"
-        sed -i.bak "s/\[\[GIT_REMOTE\]\]/$GIT_REMOTE/g" "$CLAUDE_DIR/project-context.md"
-        sed -i.bak "s/\[\[CURRENT_BRANCH\]\]/$CURRENT_BRANCH/g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[PROJECT_NAME\]\]#$PROJECT_NAME#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[PROJECT_TYPE\]\]#$PROJECT_TYPE#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[AUTHOR_NAME\]\]#$AUTHOR_NAME#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[AUTHOR_EMAIL\]\]#$AUTHOR_EMAIL#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[GIT_REMOTE\]\]#$GIT_REMOTE#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[CURRENT_BRANCH\]\]#$CURRENT_BRANCH#g" "$CLAUDE_DIR/project-context.md"
         
         # Clean up backup files
         rm -f "$CLAUDE_DIR/project-context.md.bak"
@@ -206,8 +206,8 @@ setup_team_standards() {
         cp "$TEMPLATES_DIR/team-standards.md" "$CLAUDE_DIR/team-standards.md"
         
         # Replace placeholders
-        sed -i.bak "s/\[\[PROJECT_NAME\]\]/$PROJECT_NAME/g" "$CLAUDE_DIR/team-standards.md"
-        sed -i.bak "s/\[\[PROJECT_TYPE\]\]/$PROJECT_TYPE/g" "$CLAUDE_DIR/team-standards.md"
+        sed -i.bak "s#\[\[PROJECT_NAME\]\]#$PROJECT_NAME#g" "$CLAUDE_DIR/team-standards.md"
+        sed -i.bak "s#\[\[PROJECT_TYPE\]\]#$PROJECT_TYPE#g" "$CLAUDE_DIR/team-standards.md"
         
         # Clean up backup files
         rm -f "$CLAUDE_DIR/team-standards.md.bak"
@@ -226,9 +226,9 @@ setup_custom_config() {
         cp "$TEMPLATES_DIR/custom-config.yaml" "$CLAUDE_DIR/custom-config.yaml"
         
         # Update custom config with project-specific values
-        sed -i.bak "s/\[\[PROJECT_NAME\]\]/$PROJECT_NAME/g" "$CLAUDE_DIR/custom-config.yaml"
-        sed -i.bak "s/\[\[PROJECT_TYPE\]\]/$PROJECT_TYPE/g" "$CLAUDE_DIR/custom-config.yaml"
-        sed -i.bak "s/\[\[AUTHOR_NAME\]\]/$AUTHOR_NAME/g" "$CLAUDE_DIR/custom-config.yaml"
+        sed -i.bak "s#\[\[PROJECT_NAME\]\]#$PROJECT_NAME#g" "$CLAUDE_DIR/custom-config.yaml"
+        sed -i.bak "s#\[\[PROJECT_TYPE\]\]#$PROJECT_TYPE#g" "$CLAUDE_DIR/custom-config.yaml"
+        sed -i.bak "s#\[\[AUTHOR_NAME\]\]#$AUTHOR_NAME#g" "$CLAUDE_DIR/custom-config.yaml"
         
         # Clean up backup files
         rm -f "$CLAUDE_DIR/custom-config.yaml.bak"
@@ -416,19 +416,27 @@ verify_installation() {
         errors=$((errors + 1))
     fi
     
-    if [ ! -f "$CLAUDE_DIR/project-context.md" ]; then
-        log_error "project-context.md not found"
-        errors=$((errors + 1))
-    fi
-    
-    if [ ! -f "$CLAUDE_DIR/team-standards.md" ]; then
-        log_error "team-standards.md not found"
-        errors=$((errors + 1))
-    fi
-    
     if [ ! -f ".claude.md" ]; then
         log_error ".claude.md not found"
         errors=$((errors + 1))
+    fi
+    
+    # For Full installation, check additional files
+    if [ "$INSTALLATION_MODE" = "full" ]; then
+        if [ ! -f "$CLAUDE_DIR/project-context.md" ]; then
+            log_error "project-context.md not found"
+            errors=$((errors + 1))
+        fi
+        
+        if [ ! -f "$CLAUDE_DIR/team-standards.md" ]; then
+            log_error "team-standards.md not found"
+            errors=$((errors + 1))
+        fi
+        
+        if [ ! -f "$CLAUDE_DIR/custom-config.yaml" ]; then
+            log_error "custom-config.yaml not found"
+            errors=$((errors + 1))
+        fi
     fi
     
     if [ $errors -eq 0 ]; then
