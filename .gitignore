@@ -37,6 +37,9 @@ personal-settings.yaml
 .tool-output/
 .generated/
 
+# Archivos de detección de proyecto (específicos del entorno)
+project-detection.json
+
 # Archivos de IDE/Editor
 .vscode/settings.json
 .idea/
