@@ -141,6 +141,94 @@ get_project_info() {
     log_success "Project info gathered: $PROJECT_NAME ($PROJECT_TYPE)"
 }
 
+run_project_detection() {
+    log_info "Running detailed project detection..."
+    
+    # Initialize variables with defaults
+    DETECTED_TECHNOLOGIES="unknown"
+    PRIMARY_FRAMEWORK="unknown"
+    FILE_COUNT="0"
+    BUILD_TOOL="unknown"
+    PACKAGE_MANAGER="unknown"
+    FRAMEWORKS="unknown"
+    DETECTED_DATABASES="none"
+    CONTAINER_TECH="none"
+    DETECTION_SUMMARY="{}"
+    GENERATION_DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+    
+    # Run detect-project.sh if available
+    if [ -f "$TOOLS_DIR/detect-project.sh" ]; then
+        log_info "Running project detection script..."
+        
+        # Make script executable and run it
+        chmod +x "$TOOLS_DIR/detect-project.sh"
+        "$TOOLS_DIR/detect-project.sh" --quiet
+        
+        # Extract information if jq is available and detection file exists
+        if [ -f "$CLAUDE_DIR/project-detection.json" ] && command -v jq > /dev/null 2>&1; then
+            log_info "Processing detection results..."
+            
+            # Extract detected technologies
+            DETECTED_TECHNOLOGIES=$(jq -r '.detections[] | select(.confidence > 30) | .type' "$CLAUDE_DIR/project-detection.json" | tr '\n' ', ' | sed 's/,$//' | sed 's/,/, /g')
+            
+            # Get primary framework
+            PRIMARY_FRAMEWORK=$(jq -r '.detections[0].type // "unknown"' "$CLAUDE_DIR/project-detection.json")
+            
+            # Get file count
+            FILE_COUNT=$(jq -r '.file_structure.total_files // 0' "$CLAUDE_DIR/project-detection.json")
+            
+            # Extract build tools and package managers
+            if echo "$DETECTED_TECHNOLOGIES" | grep -q "nodejs"; then
+                PACKAGE_MANAGER="npm/yarn/pnpm"
+                if [ -f "package.json" ] && command -v jq > /dev/null 2>&1; then
+                    BUILD_TOOL=$(jq -r '.scripts.build // "no build script"' package.json 2>/dev/null)
+                fi
+            elif echo "$DETECTED_TECHNOLOGIES" | grep -q "python"; then
+                PACKAGE_MANAGER="pip/poetry/conda"
+                BUILD_TOOL="setuptools/poetry"
+            elif echo "$DETECTED_TECHNOLOGIES" | grep -q "rust"; then
+                PACKAGE_MANAGER="cargo"
+                BUILD_TOOL="cargo"
+            elif echo "$DETECTED_TECHNOLOGIES" | grep -q "go"; then
+                PACKAGE_MANAGER="go modules"
+                BUILD_TOOL="go build"
+            fi
+            
+            # Extract frameworks
+            FRAMEWORKS=$(jq -r '.detections[] | select(.confidence > 20) | select(.type | test("web-frontend|mobile|flutter")) | .type' "$CLAUDE_DIR/project-detection.json" | tr '\n' ', ' | sed 's/,$//' | sed 's/,/, /g')
+            [ -z "$FRAMEWORKS" ] && FRAMEWORKS="none detected"
+            
+            # Extract databases
+            DETECTED_DATABASES=$(jq -r '.detections[] | select(.type == "database") | .databases[]? // empty' "$CLAUDE_DIR/project-detection.json" 2>/dev/null | tr '\n' ', ' | sed 's/,$//' | sed 's/,/, /g')
+            [ -z "$DETECTED_DATABASES" ] && DETECTED_DATABASES="none detected"
+            
+            # Extract container technology
+            if echo "$DETECTED_TECHNOLOGIES" | grep -q "docker"; then
+                CONTAINER_TECH="Docker"
+                if echo "$DETECTED_TECHNOLOGIES" | grep -q "kubernetes"; then
+                    CONTAINER_TECH="Docker + Kubernetes"
+                fi
+            else
+                CONTAINER_TECH="none detected"
+            fi
+            
+            # Create detection summary
+            DETECTION_SUMMARY=$(jq -c '{primary_framework: .detections[0].type, confidence: .detections[0].confidence, total_files: .file_structure.total_files, git_branch: .git_info.current_branch}' "$CLAUDE_DIR/project-detection.json" 2>/dev/null || echo '{"error": "Could not parse detection results"}')
+            
+            log_success "Project detection completed successfully"
+        else
+            log_warning "Could not process detection results (missing jq or detection file)"
+        fi
+    else
+        log_warning "Project detection script not found at $TOOLS_DIR/detect-project.sh"
+    fi
+    
+    # Export all variables for use in templates
+    export DETECTED_TECHNOLOGIES PRIMARY_FRAMEWORK FILE_COUNT BUILD_TOOL PACKAGE_MANAGER FRAMEWORKS DETECTED_DATABASES CONTAINER_TECH DETECTION_SUMMARY GENERATION_DATE
+    
+    log_success "Project detection variables prepared"
+}
+
 backup_existing_files() {
     log_info "Backing up existing files..."
     
@@ -172,13 +260,25 @@ setup_project_context() {
     if [ -f "$TEMPLATES_DIR/project-context.md" ]; then
         cp "$TEMPLATES_DIR/project-context.md" "$CLAUDE_DIR/project-context.md"
         
-        # Replace placeholders
+        # Replace basic placeholders
         sed -i.bak "s#\[\[PROJECT_NAME\]\]#$PROJECT_NAME#g" "$CLAUDE_DIR/project-context.md"
         sed -i.bak "s#\[\[PROJECT_TYPE\]\]#$PROJECT_TYPE#g" "$CLAUDE_DIR/project-context.md"
         sed -i.bak "s#\[\[AUTHOR_NAME\]\]#$AUTHOR_NAME#g" "$CLAUDE_DIR/project-context.md"
         sed -i.bak "s#\[\[AUTHOR_EMAIL\]\]#$AUTHOR_EMAIL#g" "$CLAUDE_DIR/project-context.md"
         sed -i.bak "s#\[\[GIT_REMOTE\]\]#$GIT_REMOTE#g" "$CLAUDE_DIR/project-context.md"
         sed -i.bak "s#\[\[CURRENT_BRANCH\]\]#$CURRENT_BRANCH#g" "$CLAUDE_DIR/project-context.md"
+        
+        # Replace auto-detected information placeholders
+        sed -i.bak "s#\[\[PRIMARY_FRAMEWORK\]\]#$PRIMARY_FRAMEWORK#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[DETECTED_TECHNOLOGIES\]\]#$DETECTED_TECHNOLOGIES#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[FILE_COUNT\]\]#$FILE_COUNT#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[BUILD_TOOL\]\]#$BUILD_TOOL#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[PACKAGE_MANAGER\]\]#$PACKAGE_MANAGER#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[FRAMEWORKS\]\]#$FRAMEWORKS#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[DETECTED_DATABASES\]\]#$DETECTED_DATABASES#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[CONTAINER_TECH\]\]#$CONTAINER_TECH#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[GENERATION_DATE\]\]#$GENERATION_DATE#g" "$CLAUDE_DIR/project-context.md"
+        sed -i.bak "s#\[\[DETECTION_SUMMARY\]\]#$DETECTION_SUMMARY#g" "$CLAUDE_DIR/project-context.md"
         
         # Clean up backup files
         rm -f "$CLAUDE_DIR/project-context.md.bak"
@@ -345,6 +445,7 @@ main() {
     check_prerequisites
     detect_current_installation
     get_project_info
+    run_project_detection
     backup_existing_files
     setup_project_context
     setup_team_standards

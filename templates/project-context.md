@@ -7,10 +7,18 @@ Este documento proporciona contexto específico del proyecto para Claude Code. P
 ### Básicos
 - **Nombre del Proyecto**: [[PROJECT_NAME]]
 - **Tipo de Proyecto**: [[PROJECT_TYPE]]
+- **Framework Principal**: [[PRIMARY_FRAMEWORK]]
 - **Versión**: 1.0.0
 - **Autor Principal**: [[AUTHOR_NAME]] <[[AUTHOR_EMAIL]]>
 - **Repositorio**: [[GIT_REMOTE]]
 - **Rama Principal**: [[CURRENT_BRANCH]]
+
+### Análisis Automático
+- **Tecnologías Detectadas**: [[DETECTED_TECHNOLOGIES]]
+- **Total de Archivos**: [[FILE_COUNT]]
+- **Herramientas de Build**: [[BUILD_TOOL]]
+- **Gestor de Paquetes**: [[PACKAGE_MANAGER]]
+- **Framework/Librerías**: [[FRAMEWORKS]]
 
 ### Descripción
 [Describe brevemente qué hace tu proyecto, su propósito y objetivos principales]
@@ -32,13 +40,16 @@ project-root/
 ```
 
 ### Tecnologías Principales
-[Lista las tecnologías principales utilizadas en el proyecto]
+[Auto-detectadas y verificadas manualmente]
 
 - **Lenguaje**: [[PROJECT_TYPE]]
-- **Framework**: [Framework principal si aplica]
-- **Base de Datos**: [Base de datos utilizada]
-- **Herramientas de Build**: [Herramientas de construcción]
-- **Testing**: [Framework de testing]
+- **Framework Principal**: [[PRIMARY_FRAMEWORK]]
+- **Tecnologías Detectadas**: [[DETECTED_TECHNOLOGIES]]
+- **Herramientas de Build**: [[BUILD_TOOL]]
+- **Gestor de Paquetes**: [[PACKAGE_MANAGER]]
+- **Base de Datos**: [[DETECTED_DATABASES]]
+- **Contenedores**: [[CONTAINER_TECH]]
+- **Testing**: [Framework de testing - pendiente configurar]
 
 ### Patrones Arquitectónicos
 [Describe los patrones arquitectónicos utilizados]
@@ -249,8 +260,17 @@ npm run test:e2e
 
 ---
 
-**Última actualización**: [Fecha]  
+**Última actualización**: [[GENERATION_DATE]]  
+**Auto-generado**: Sí (con detect-project.sh)  
 **Mantenido por**: [[AUTHOR_NAME]]  
 **Revisado por**: [Equipo de desarrollo]
 
-> 💡 **Tip**: Mantén este archivo actualizado con cambios importantes del proyecto. Claude Code lo utilizará para proporcionar asistencia más contextual y relevante.
+> 💡 **Tip**: Este archivo fue auto-generado con información detectada del proyecto. Mantén las secciones personalizadas actualizadas. Claude Code lo utilizará para proporcionar asistencia más contextual y relevante.
+
+## Información de Detección Automática
+
+```json
+[[DETECTION_SUMMARY]]
+```
+
+*Esta información fue generada automáticamente por detect-project.sh*
