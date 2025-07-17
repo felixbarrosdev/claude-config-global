@@ -440,9 +440,17 @@ run_scenario_test() {
         return 1
     fi
     
-    # Simulate Claude execution
+    # Check if actual-output.md exists, otherwise simulate Claude execution
+    local actual_output_file="$scenario_path/actual-output.md"
     local actual_output="$TEMP_DIR/${scenario_name}_actual.md"
-    simulate_claude_execution "$scenario_path" "$actual_output"
+    
+    if [ -f "$actual_output_file" ]; then
+        log_verbose "Using existing actual-output.md for $scenario_name"
+        cp "$actual_output_file" "$actual_output"
+    else
+        log_verbose "No actual-output.md found, simulating Claude execution for $scenario_name"
+        simulate_claude_execution "$scenario_path" "$actual_output"
+    fi
     
     # Compare with golden master
     local expected_output="$scenario_path/golden-master.md"

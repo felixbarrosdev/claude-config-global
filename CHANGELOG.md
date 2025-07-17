@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Database Schema Design Module** - Complete assistance module for database design
+- `database-schema-design.md` prompt for scalable database schema generation
+- `database-schema-design-usage.md` comprehensive usage documentation
+- Meta-testing scenario for database schema design validation
 - Comprehensive CONTRIBUTING.md with detailed contribution guidelines
 - CODE_OF_CONDUCT.md based on Contributor Covenant
 - GitHub issue templates for bug reports, feature requests, and new prompts
